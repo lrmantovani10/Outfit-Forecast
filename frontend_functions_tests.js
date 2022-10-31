@@ -3,6 +3,9 @@ import * as frontend_functions from './frontend_functions.js';
 // Creating a user to run tests
 let user_x = new frontend_functions.User("user_x")
 
+// CReating a new EnviornmentalData class to run tests
+let envData = new frontend_functions.EnvironmentalData()
+
 // sendSurveyResponses tests //
 
 // If each input is in the valid format, sendSurveyResponses() should return true.
@@ -48,11 +51,12 @@ for (const test of surveyTests) {
     try {
         let output = user_x.sendSurveyResponses(test[0])
         if (output != test[1]) {
-            throw surveyError + "input " + test[0] +
-            " does not match output " + test[1]
+            throw surveyError + "input " + JSON.stringify(test[0]) +
+            " does not match output " + test[1].toString()
         }
     }
     catch (e) {
         throw surveyError + e
     }
 }
+
