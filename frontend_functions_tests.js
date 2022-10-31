@@ -71,6 +71,26 @@ let necessaryKeys = new Set(["coord", "weather", "main",
 
 Object.keys(response).forEach(function (key) {
     if (necessaryKeys.has(key)) {
+        if (key == "main") {
+            try {
+                if (typeof (response[key]["feels_like"]) != "number") {
+                    throw "temperature sensation value is not a number!"
+                }
+            }
+            catch {
+                throw "'main' object within weather API response missing 'feels_like' key"
+            }
+        }
+        else if (key == "clouds") {
+            try {
+                if (typeof (response[key]["all"]) != "number") {
+                    throw "clouds metric is not a number!"
+                }
+            }
+            catch {
+                throw "'clouds' object within weather API response missing 'all' key"
+            }
+        }
         necessaryKeys.delete(key)
     }
 })
