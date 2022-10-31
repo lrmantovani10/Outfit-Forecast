@@ -7,7 +7,6 @@ let user_x = new frontend_functions.User("user_x")
 let envData = new frontend_functions.EnvironmentalData()
 
 // sendSurveyResponses tests //
-
 // If each input is in the valid format, sendSurveyResponses() should return true.
 // Otherwise, it should return false
 var surveyTests = [
@@ -59,4 +58,30 @@ for (const test of surveyTests) {
         throw surveyError + e
     }
 }
+
+// getWeather test //
+// the format of the OpenWeather API's response can be seen here:
+// https://rapidapi.com/blog/openweathermap-api-overview/javascript/
+
+var response = envData.getWeather()
+// Check that all the keys neeed for the app to generate predictions are in the
+// API's response
+let necessaryKeys = new Set(["coord", "weather", "main",
+    "visibility", "clouds"])
+
+Object.keys(response).forEach(function (key) {
+    if (necessaryKeys.has(key)) {
+        necessaryKeys.delete(key)
+    }
+})
+
+// If there are important keys not found in the API's response, throw error
+if (necessaryKeys.size != 0) {
+    throw "The following keys were not found in the weather API's response: " +
+    necessaryKeys.toString()
+}
+
+// dailyRecommender tests //
+
+
 
