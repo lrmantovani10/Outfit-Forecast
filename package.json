@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "npm": "^8.19.2",
+    "react-native-image-picker": "^4.10.0"
+  }
+}
