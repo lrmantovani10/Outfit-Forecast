@@ -257,3 +257,60 @@ test("camera", () => {
     imageData_x.update_image(0, new_state3)
     expect((imageData_x.getPictures[0]).toEqual(new_state3))
 })
+
+// *********** STORE SURVEY TESTS *********** //
+
+// Generate new dict of preferences for user
+user_x.Preferences = {}
+
+// inputs are clothing_ID, lower_bound, upper_bound
+var add_prefPairs = [
+    // NOTE: clothing_ID validation happens in Clothing class
+
+    // valid
+    [[0, 10, 25], true], 
+
+    // invalid, lower bound below lowest allowed temp
+    [[1, -20, 25], false],
+
+    // invalid, upper bound above highest allowed temp
+    [[2, 35, 145], false],
+
+    // invalid, lower bound greater than upper bound
+    [[3, 65, 25], false]
+]
+
+test("addPrefPairs", () => {
+    for (testCase of add_prefPairs) {
+        expect(user_x.Preferences.addPair(testCase[0])).toEqual(testCase[1])
+    }
+})
+
+user_x.Preferences.addPair(0, 10, 25);
+
+// inputs are clothing_ID, lower_bound, upper_bound
+var update_prefPairs = [
+    // NOTE: clothing_ID validation happens in Clothing class
+
+    // valid
+    [[0, 10, 35], true], 
+
+    // invalid, lower bound below lowest allowed temp
+    [[0, -20, 25], false],
+
+    // invalid, upper bound above highest allowed temp
+    [[0, 35, 145], false],
+
+    // invalid, lower bound greater than upper bound
+    [[0, 65, 25], false]
+]
+
+test("updatePrefPairs", () => {
+    for (testCase of update_prefPairs) {
+        expect(user_x.Preferences.updatePair(testCase[0])).toEqual(testCase[1])
+    }
+})
+
+
+
+
