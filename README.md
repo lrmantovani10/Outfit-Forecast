@@ -7,4 +7,9 @@ Current class diagram
 
 Test suite used:
 
-* Jest (https://jestjs.io/)
+- Jest (https://jestjs.io/)
+
+Testing files:
+
+- frontend_functions_tests.js -- for functions associated with the front end
+- backend_functions_tests.js -- for functions associated with the back end
