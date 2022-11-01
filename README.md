@@ -12,4 +12,4 @@ Test suite used:
 Testing files:
 
 - frontend_functions_tests.js -- for functions associated with the front end
-- backend_functions_tests.js -- for functions associated with the back end
+- backend_functions_tests.py -- for functions associated with the back end
