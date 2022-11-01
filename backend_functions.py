@@ -3,6 +3,7 @@ class User:
     self.username = username
     self.wardrobe = []
     self.clothingHistory = []
+    self.preferences = []
 
   def get_username(self):
       return self.username
