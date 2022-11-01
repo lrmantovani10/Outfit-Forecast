@@ -52,6 +52,10 @@ class TestUser(unittest.TestCase):
         test_item = Clothing("t-shirt", test_img, 0)
         updated_wardrobe = newUser.get_wardrobe()
         self.assertEqual(updated_wardrobe, [test_item])
+        test_img2 = "gs://first-bucket-example/t-shirt.jpgz" #faulty URI, which doesn't work
+        newUser.classifyNew(test_img2)
+        self.assertEqual(newUser.get_wardrobe(), [test_item])
+
 
 class TestClothing(unittest.TestCase):
 

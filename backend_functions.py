@@ -2,6 +2,7 @@ class User:
   def __init__(self, username):
     self.username = username
     self.wardrobe = []
+    self.
     self.clothingHistory = []
 
   def get_username(self):
