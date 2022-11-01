@@ -2,7 +2,6 @@ class User:
   def __init__(self, username):
     self.username = username
     self.wardrobe = []
-    self.
     self.clothingHistory = []
 
   def get_username(self):
@@ -41,4 +40,8 @@ class Clothing:
   
   def set_classification(self):
       return True
+
+class enviornmentalData:
+  def __init__(self, username):
+
 

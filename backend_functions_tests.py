@@ -83,5 +83,15 @@ class TestClothing(unittest.TestCase):
         newClothing.set_classification("top")
         self.assertEqual(newClothing.get_classification(), "top")
 
+class TestEnivornmentalData(unittest.TestCase):       
+
+    def test_getWeather(self):
+        envData = EnviornmentalData()
+        
+
+    def test_
+
 if __name__ == '__main__':
         unittest.main() 
+
+        
