@@ -42,12 +42,22 @@ class TestUser(unittest.TestCase):
     def test_wardrobe(self):
         newUser = User(" ")
         self.assertEqual(newUser.get_wardrobe(), [])
+        test_img = "gs://first-bucket-example/t-shirt.jpg" 
+        newClothing = Clothing("t-shirt", test_img, 0)
+        self.assertTrue(newUser.update_wardrobe(newClothing))
+        self.assertFalse(newUser.update_wardrobe("t-shirt"), "must update wardobe with clothing item")
+        newUser.update_wardrobe(newClothing)
+        self.assertEqual(newUser.get_wardrobe(), [newClothing])
+
 
     # test that classifyNew correctly adds a clothing item to user's wardrobe
+    # in reality, when user takes photo, ImageData class will call upload_image on that image which sends
+    # it to the bucket, then gets the cloud storage uri and calls classifyNew with that uri
     def test_classifyNew(self):
         newUser = User(" ")
         self.assertEqual(newUser.get_wardrobe(), [])
-        test_img = "gs://first-bucket-example/t-shirt.jpg" # google vision api takes imageURI from cloud storage bucket
+        # google vision api takes imageURI from cloud storage bucket
+        test_img = "gs://first-bucket-example/t-shirt.jpg" 
         newUser.classifyNew(test_img)
         test_item = Clothing("t-shirt", test_img, 0)
         updated_wardrobe = newUser.get_wardrobe()

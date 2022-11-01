@@ -3,9 +3,16 @@ class User:
     self.username = username
     self.wardrobe = []
     self.clothingHistory = []
+    self.preferences = []
 
   def get_username(self):
       return self.username
+
+  def get_wardrobe(self):
+      return self.wardrobe
+
+  def update_wardrobe(self):
+      return True
 
 class Clothing:
   def __init__(self, name, imgURL, clothingID):
