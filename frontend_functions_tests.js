@@ -191,6 +191,24 @@ test("dailyRecommender", () => {
     }
 })
 
+// *********** ImageData Tests *********** //
+// imageData contains a set of pictures, which are returned using getPictures()
+// we return a list of UIImage pictures using getPictures() and use this as input
+// 
+
+let pictures = frontend_functions.getPictures()
+
+test("upload", () => {
+    //this will run the upload image on the returned pictures from the Image_Data object
+    //if the size of the set is not 0, uploadImage() should return true
+    //if the size of the set is 0, uploadImage() should return false
+    
+    //below tests the above two cases, expecting true in the first case and false in the
+    // second case
+    if(size(pictures) > 0){ expect(frontend_functions.uploadImage(pictures)).toEqual(true) }
+    else { expect(frontend_functions.uploadImage(pictures_empty)).toEqual(false) }
+})
+
 
 // camera tests //
 // Take pictures, choose from gallery, and successfully store them for later retrieval
