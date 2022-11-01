@@ -5,9 +5,10 @@ An app to generate outfit predictions based on one's wardrobe and current weathe
 Current class diagram
 ![Class Diagram](Class_Diagram.png)
 
-Test suite used:
+Test suites used:
 
-- Jest (https://jestjs.io/)
+- FRONT END: Jest (https://jestjs.io/)
+- BACK END: unittest (https://docs.python.org/3/library/unittest.html)
 
 Testing files:
 
