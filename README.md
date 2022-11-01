@@ -7,4 +7,4 @@ Current class diagram
 
 Test suite used:
 
-- Jest (https://jestjs.io/)
+* Jest (https://jestjs.io/)
