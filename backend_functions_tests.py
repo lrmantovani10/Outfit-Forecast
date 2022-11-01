@@ -42,6 +42,13 @@ class TestUser(unittest.TestCase):
     def test_wardrobe(self):
         newUser = User(" ")
         self.assertEqual(newUser.get_wardrobe(), [])
+        test_img = "gs://first-bucket-example/t-shirt.jpg" 
+        newClothing = Clothing("t-shirt", test_img, 0)
+        self.assertTrue(newUser.update_wardrobe(newClothing))
+        self.assertFalse(newUser.update_wardrobe("t-shirt"), "must update wardobe with clothing item")
+        newUser.update_wardrobe(newClothing)
+        self.assertEqual(newUser.get_wardrobe(), [newClothing])
+
 
     # test that classifyNew correctly adds a clothing item to user's wardrobe
     # in reality, when user takes photo, ImageData class will call upload_image on that image which sends

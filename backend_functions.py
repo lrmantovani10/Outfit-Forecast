@@ -8,6 +8,12 @@ class User:
   def get_username(self):
       return self.username
 
+  def get_wardrobe(self):
+      return self.wardrobe
+
+  def update_wardrobe(self):
+      return True
+
 class Clothing:
   def __init__(self, name, imgURL, clothingID):
     self.objectName = name
