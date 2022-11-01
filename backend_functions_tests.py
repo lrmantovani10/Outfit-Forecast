@@ -26,6 +26,17 @@ class TestUser(unittest.TestCase):
         self.assertFalse(newUser.set_preference([130], "Preference must be an array of 2 elements"))
         self.assertFalse(newUser.set_preference([], "Preference must be an array of 2 elements"))
 
-
+    # Location API returns latitude, longitude pair
+    def test_location(self):
+        newUser = User(" ")
+        self.assertFalse(newUser.set_location([-95, 70], "Latitude must be between -90 and 90 degrees")) 
+        self.assertFalse(newUser.set_location([95, 70], "Latitude must be between -90 and 90 degrees")) 
+        self.assertFalse(newUser.set_location([50, -182], "Longitude must be between -180 and 180 degrees")) 
+        self.assertFalse(newUser.set_location([50, 182], "Longitude must be between -180 and 180 degrees")) 
+        self.assertFalse(newUser.set_location([-182], "Location must have 2 values"))
+        self.assertFalse(newUser.set_location([], "Location must have 2 values")) 
+        self.assertTrue(newUser.set_location([50, 65]))
+        self.assertEqual(newUser.get_location(), [50, 65])
+    
 if __name__ == '__main__':
         unittest.main() 
