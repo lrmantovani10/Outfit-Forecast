@@ -42,3 +42,7 @@ class Clothing:
   def set_classification(self):
       return True
 
+class enviornmentalData:
+  def __init__(self, username):
+
+
