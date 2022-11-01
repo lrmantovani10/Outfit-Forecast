@@ -42,6 +42,10 @@ class Clothing:
       return True
 
 class enviornmentalData:
-  def __init__(self, username):
+  def __init__(self):
+    newUser = User("")
+    self.enviroData = newUser
+
+
 
 
