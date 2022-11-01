@@ -92,7 +92,18 @@ class TestClothing(unittest.TestCase):
         self.assertFalse(newClothing.set_classification("top!"), "classification cannot have special characters")
         newClothing.set_classification("top")
         self.assertEqual(newClothing.get_classification(), "top")
+    
+    
+class TestEnviornmentalData(unittest.TestCase):
 
+
+    def test_getWeather(self):
+        eObject = enviornmentalData()
+        weatherProperties = eObject.getWeather()
+        assert type(weatherProperties[0]) is int
+        assert type(weatherProperties[1]) is int
+        assert type(weatherProperties[2]) is int
+        assert type(weatherProperties[3]) is str
 
 
 
