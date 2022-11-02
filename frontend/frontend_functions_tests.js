@@ -262,7 +262,7 @@ test("camera", () => {
     expect((imageData_x.getPictures[0]).toEqual(new_state))
     expect((imageData_x.getPictures[1]).toEqual(new_state2))
 
-    // Testing update_image, which replaces a certain image in imageData's pictures field
+    // Testing updateImage, which replaces a certain image in imageData's pictures field
 
     imageData_x.userCamera.takePicture();
     if (imageData_x.userCamera.res.didCancel) {
@@ -272,7 +272,7 @@ test("camera", () => {
     } else {
         new_state3 = imageData_x.userCamera.state.resourcePath.data
     }
-    imageData_x.update_image(0, new_state3)
+    imageData_x.updateImage(0, new_state3)
     expect((imageData_x.getPictures[0]).toEqual(new_state3))
 })
 
