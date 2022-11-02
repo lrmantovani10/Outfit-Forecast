@@ -5,14 +5,44 @@ class User:
     self.clothingHistory = []
     self.preferences = []
 
-  def get_username(self):
+  def getUsername(self):
       return self.username
 
-  def get_wardrobe(self):
+  def setUsername(self):
+      return True   
+
+  def getWardrobe(self):
       return self.wardrobe
 
-  def update_wardrobe(self):
+  def updateWardrobe(self):
       return True
+
+  def setPreference(self):
+      return True
+
+  def getPreferences(self):
+      return []  
+  
+  def setLocation(self):
+      return True   
+  
+  def getLocation(self):
+      return []            
+  
+  def setCurrOutfit(self):
+      return True   
+  
+  def getCurrOutfit(self):
+      return []           
+  
+  def updateClothingHistory(self):
+      return True   
+  
+  def getClothingHistory(self):
+      return []           
+
+  def classifyNew(self):
+      return    
 
 class Clothing:
   def __init__(self, name, imgURL, clothingID):
@@ -23,36 +53,38 @@ class Clothing:
     self.imgURL = imgURL
 
   # getters
-  def get_objectName(self):
+  def getObjectName(self):
     return self.objectName
 
-  def get_warmthRating(self):
+  def getWarmthRating(self):
       return self.warmthRating
 
-  def get_clothingID(self):
+  def getClothingID(self):
       return self.clothingID
   
-  def get_classification(self):
+  def getClassification(self):
       return self.classification
 
-  def get_imgURL(self):
+  def getImgURL(self):
       return self.imgURL
   
   # setters
-  def set_objectName(self):
+  def setObjectName(self):
       return True
 
-  def set_warmthRating(self):
+  def setWarmthRating(self):
       return True
   
-  def set_classification(self):
+  def setClassification(self):
       return True
 
 class enviornmentalData:
   def __init__(self):
     newUser = User("")
     self.enviroData = newUser
-
+    
+  def getWeather():
+    return []
 
 
 
