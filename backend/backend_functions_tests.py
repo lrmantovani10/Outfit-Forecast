@@ -113,7 +113,7 @@ class TestUser(unittest.TestCase):
 
     # test that classifyNew correctly adds a clothing item to user's wardrobe
     # in reality, when user takes photo, ImageData class will call upload_image on that image which sends
-    # it to the bucket, then gets the cloud storage uri and calls classifyNew with that uri
+    # it to the bucket, then gets the firebase URL and calls classifyNew with that URL
     def test_classifyNew(self):
         newUser = User(" ")
         self.assertEqual(newUser.getWardrobe(), [])
@@ -129,9 +129,9 @@ class TestUser(unittest.TestCase):
 
 
 class TestClothing(unittest.TestCase):
-
+    
     def test_objectName(self):
-        newClothing = Clothing("t-shirt", "gs://first-bucket-example/t-shirt.jpg", 0)
+        newClothing = Clothing("t-shirt", "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7", 0)
         self.assertEqual(newClothing.getObjectName(), "t-shirt")
         self.assertTrue(newClothing.setObjectName("t-shirt"))
         self.assertFalse(newClothing.setObjectName(""), "objectName is empty") 
@@ -139,13 +139,13 @@ class TestClothing(unittest.TestCase):
         self.assertFalse(newClothing.setObjectName(0), "objectName must be type string") 
 
     def test_warmthRating(self):
-        newClothing = Clothing("t-shirt", "gs://first-bucket-example/t-shirt.jpg", 0)
+        newClothing = Clothing("t-shirt", "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7", 0)
         self.assertEqual(newClothing.getWarmthRating(), 0)
         self.assertTrue(newClothing.setWarmthRating(0))
         self.assertFalse(newClothing.setWarmthRating("0"), "warmthRating must be type int")
 
     def test_classification(self):
-        newClothing = Clothing("t-shirt", "gs://first-bucket-example/t-shirt.jpg", 0)
+        newClothing = Clothing("t-shirt", "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7", 0)
         self.assertTrue(newClothing.setClassification("top"))
         self.assertFalse(newClothing.setClassification(""), "classification cannot be empty")
         self.assertFalse(newClothing.setClassification(0), "classification must be type string")
@@ -156,7 +156,6 @@ class TestClothing(unittest.TestCase):
     
     
 class TestEnviornmentalData(unittest.TestCase):
-
 
     def test_getWeather(self):
         eObject = enviornmentalData()
