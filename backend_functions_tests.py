@@ -106,10 +106,7 @@ class TestEnviornmentalData(unittest.TestCase):
         assert type(weatherProperties[2]) is int
         assert type(weatherProperties[3]) is str
 
-
-
-
 if __name__ == '__main__':
-        unittest.main() 
+        unittest.main()
 
         
