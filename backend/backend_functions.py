@@ -10,40 +10,40 @@ class User:
   def getUsername(self):
       return self.username
 
-  def setUsername(self):
+  def setUsername(self, username):
       return True   
 
   def getWardrobe(self):
       return self.wardrobe
 
-  def updateWardrobe(self):
+  def updateWardrobe(self, clothingItem):
       return True
 
-  def setPreference(self):
+  def setPreference(self, prefArr):
       return True
 
   def getPreferences(self):
       return []  
   
-  def setLocation(self):
+  def setLocation(self, locArr):
       return True   
   
   def getLocation(self):
       return []            
   
-  def setCurrOutfit(self):
+  def setCurrOutfit(self, fit):
       return True   
   
   def getCurrOutfit(self):
       return []           
   
-  def updateClothingHistory(self):
+  def updateClothingHistory(self, fit):
       return True   
   
   def getClothingHistory(self):
       return []           
 
-  def classifyNew(self):
+  def classifyNew(self, imgURL):
       return    
 
 class Clothing:
@@ -71,13 +71,13 @@ class Clothing:
       return self.imgURL
   
   # setters
-  def setObjectName(self):
+  def setObjectName(self, name):
       return True
 
-  def setWarmthRating(self):
+  def setWarmthRating(self, value):
       return True
   
-  def setClassification(self):
+  def setClassification(self, name):
       return True
 
 class enviornmentalData:

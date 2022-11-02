@@ -53,37 +53,36 @@ class TestUser(unittest.TestCase):
 
     def test_preferences(self):
         newUser = User(" ")
-        self.assertFalse(newUser.setPreference([0, -20, 70], "Temperature cannot be below -20 Farenheit")) 
-        self.assertFalse(newUser.setPreference([1, 0, 130], "Temperature cannot be above 120 Farenheit"))
-        self.assertTrue(newUser.setPreference([2, -10, 120])) # Lower and upper bound included
+        self.assertFalse(newUser.setPreference([0, -20, 70]), "Temperature cannot be below -20 Farenheit")
+        self.assertFalse(newUser.setPreference([1, 0, 130]), "Temperature cannot be above 120 Farenheit")
+        self.assertTrue(newUser.setPreference([2, -10, 120])) # Lower and upper bound properly included
         self.assertEqual(newUser.getPreferences(), [[2, -10, 120]])
         self.assertTrue(newUser.setPreference([3, 0, 65]))
         self.assertEqual(newUser.getPreferences(), [[2, -10, 120], [3, 0, 65]])
-        self.assertFalse(newUser.setPreference([130], "Preference must be an array of 3 elements"))
-        self.assertFalse(newUser.setPreference([], "Preference must be an array of 3 elements"))
-        self.assertFalse(newUser.setPreference([10, 10], "Preference must be an array of 3 elements"))
+        self.assertFalse(newUser.setPreference([130]), "Preference must be an array of 3 elements")
+        self.assertFalse(newUser.setPreference([]), "Preference must be an array of 3 elements")
+        self.assertFalse(newUser.setPreference([10, 10]), "Preference must be an array of 3 elements")
 
     # Location API returns latitude, longitude pair
     def test_location(self):
         newUser = User(" ")
-        self.assertFalse(newUser.setLocation([-95, 70], "Latitude must be between -90 and 90 degrees")) 
-        self.assertFalse(newUser.setLocation([95, 70], "Latitude must be between -90 and 90 degrees")) 
-        self.assertFalse(newUser.setLocation([50, -182], "Longitude must be between -180 and 180 degrees")) 
-        self.assertFalse(newUser.setLocation([50, 182], "Longitude must be between -180 and 180 degrees")) 
-        self.assertFalse(newUser.setLocation([-182], "Location must have 2 values"))
-        self.assertFalse(newUser.setLocation([], "Location must have 2 values")) 
+        self.assertFalse(newUser.setLocation([-95, 70]), "Latitude must be between -90 and 90 degrees")
+        self.assertFalse(newUser.setLocation([95, 70]), "Latitude must be between -90 and 90 degrees")
+        self.assertFalse(newUser.setLocation([50, -182]), "Longitude must be between -180 and 180 degrees")
+        self.assertFalse(newUser.setLocation([50, 182]), "Longitude must be between -180 and 180 degrees")
+        self.assertFalse(newUser.setLocation([-182]), "Location must have 2 values")
+        self.assertFalse(newUser.setLocation([]), "Location must have 2 values")
         self.assertTrue(newUser.setLocation([50, 65]))
-        self.assertEqual(newUser.getLocation(), [50, 65])
+        self.assertFalse(newUser.getLocation(), [50, 65])
     
     # no set_wardrobe because classifyNew() will handle appending items to wardrobe
     def test_wardrobe(self):
         newUser = User(" ")
         self.assertEqual(newUser.getWardrobe(), [])
-        test_img = "gs://first-bucket-example/t-shirt.jpg" 
+        test_img = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7"
         newClothing = Clothing("t-shirt", test_img, 0)
         self.assertTrue(newUser.updateWardrobe(newClothing))
         self.assertFalse(newUser.updateWardrobe("t-shirt"), "must update wardobe with clothing item")
-        newUser.updateWardrobe(newClothing)
         self.assertEqual(newUser.getWardrobe(), [newClothing])
 
     def test_currOutfit(self):
@@ -95,6 +94,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.getCurrOutfit(), fit1)
         self.assertFalse(newUser.setCurrOutfit(fit2), "There must be 4 clothing objects")
         self.assertFalse(newUser.setCurrOutfit(fit3), "There must be 4 clothing objects")
+        self.assertFalse(newUser.setCurrOutfit(["jacket","shirt","jeans","shoes"]), "These are not clothing objects")
 
     def test_clothingHistory(self):
         newUser = User(" ")
@@ -117,14 +117,14 @@ class TestUser(unittest.TestCase):
     def test_classifyNew(self):
         newUser = User(" ")
         self.assertEqual(newUser.getWardrobe(), [])
-        # google vision api takes imageURI from cloud storage bucket
-        testImg = "gs://first-bucket-example/t-shirt.jpg" 
+        # google vision api takes imageURL from firebase
+        testImg = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater.jpg?alt=media&token=ded9d625-062e-4e61-bbdc-a3988104fb8b"
         newUser.classifyNew(testImg)
-        testItem = Clothing("t-shirt", testImg, 0)
+        testItem = Clothing("sweater", testImg, 0)
         updatedWardrobe = newUser.getWardrobe()
         self.assertEqual(updatedWardrobe, [testItem])
-        testImg2 = "gs://first-bucket-example/t-shirt.jpgz" #faulty URI, which doesn't work
-        newUser.classifyNew(testImg2)
+        testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater" # faulty URL, which doesn't work
+        self.assertFalse(newUser.classifyNew(testImg2))
         self.assertEqual(newUser.getWardrobe(), [testItem])
 
 
@@ -161,10 +161,10 @@ class TestEnviornmentalData(unittest.TestCase):
     def test_getWeather(self):
         eObject = enviornmentalData()
         weatherProperties = eObject.getWeather()
-        assert type(weatherProperties[0]) is int
-        assert type(weatherProperties[1]) is int
-        assert type(weatherProperties[2]) is int
-        assert type(weatherProperties[3]) is str
+        self.assertEqual(str(weatherProperties[0]), "<class 'int'>")
+        self.assertEqual(str(weatherProperties[1]), "<class 'int'>")
+        self.assertEqual(str(weatherProperties[2]), "<class 'int'>")
+        self.assertEqual(str(weatherProperties[3]), "<class 'str'>")
 
 if __name__ == '__main__':
         unittest.main()
