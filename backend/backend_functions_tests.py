@@ -1,18 +1,41 @@
 import unittest
 from backend_functions import *
-import pymongo
-from pymongo import MongoClient
 
+# Tries to connect and insert to a mongodb database based on
 # Testing the connection to the database
-def test_connection():   
-    cluster = MongoClient("mongodb+srv://DGilb23:Bhhe2nsBOXwI4Axh@cluster0.mpb6ff1.mongodb.net/?retryWrites=true&w=majority")
-    db = cluster["Clothing"]
-    collection = db["Test"]
-    test = {"username": "Test Success"}
-    collection.insert_one(test)
-    print("Connection Successful!")
+def connection_link_tester(link):
+    client = pymongo.MongoClient(link)
+    try:
+        db = client["Clothing"]
+        collection = db["Test"]
+        test = {"unittest": "ok"}
+        collection.insert_one(test)
+        return True
+    except:
+        return False
 
-test_connection()
+class TestConnection(unittest.TestCase):
+
+    # Initially ran into SSL certificate issues for realLink below
+    # To fix install these certificates that MongoDB uses (https://stackoverflow.com/a/69407602), as the default Windows ones are expired in terms of what MongoDB requires
+    # If this test fails that is why ^
+    def test_connection(self):
+        realLink = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
+        fakeLink = "yo yo yo"
+        self.assertFalse(connection_link_tester(fakeLink))
+
+        # This will have added a valid entry to the db
+        self.assertTrue(connection_link_tester(realLink))
+
+        client = pymongo.MongoClient(realLink)
+        db = client["Clothing"]
+        collection = db["Test"]
+
+        # This document can only be made by connection_link_tester above, so it should exist
+        self.assertTrue(collection.count_documents({"unittest": "ok"}) > 0)
+
+        # This fake document should not exist
+        self.assertFalse(collection.count_documents({'doesNotExist': 'Fake'}) > 0)
 
 class TestUser(unittest.TestCase):
 
