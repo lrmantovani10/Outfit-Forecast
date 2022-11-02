@@ -50,15 +50,32 @@ class TestUser(unittest.TestCase):
         newUser.update_wardrobe(newClothing)
         self.assertEqual(newUser.get_wardrobe(), [newClothing])
 
-    def test_curr_outfit(self):
+    def test_currOutfit(self):
         newUser = User(" ")
         fit1 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3)]
         fit2 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2)]
         fit3 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3), Clothing("Sneakers", "URL", 4)]
-        self.assertTrue(newUser.set_curr_outfit(fit1))
-        self.assertEqual(newUser.get_curr_outfit(), fit1)
-        self.assertFalse(newUser.set_curr_outfit(fit2), "There must be 4 clothing objects")
-        self.assertFalse(newUser.set_curr_outfit(fit3), "There must be 4 clothing objects")
+        self.assertTrue(newUser.set_currOutfit(fit1))
+        self.assertEqual(newUser.get_currOutfit(), fit1)
+        self.assertFalse(newUser.set_currOutfit(fit2), "There must be 4 clothing objects")
+        self.assertFalse(newUser.set_currOutfit(fit3), "There must be 4 clothing objects")
+
+    def test_clothingHistory(self):
+        newUser = User(" ")
+        fit1 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3)]
+        fit2 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2)]
+        fit3 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3), Clothing("Sneakers", "URL", 4)]
+        fit4 = [Clothing("Sweater", "URL", 0), Clothing("Dress Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3)]
+        self.assertTrue(newUser.update_ClothingHistory(fit1))
+        self.assertEqual(newUser.get_ClothingHistory(), [fit1])
+        self.assertFalse(newUser.update_ClothingHistory(fit2), "There must be 4 clothing objects in the fit")
+        self.assertEqual(newUser.get_ClothingHistory(), [fit1])
+        self.assertFalse(newUser.update_ClothingHistory(fit3), "There must be 4 clothing objects in the fit")
+        self.assertEqual(newUser.get_ClothingHistory(), [fit1])
+        self.assertTrue(newUser.update_ClothingHistory(fit4))
+        self.assertEqual(newUser.get_ClothingHistory(), [fit1, fit4])
+
+
 
 
 
