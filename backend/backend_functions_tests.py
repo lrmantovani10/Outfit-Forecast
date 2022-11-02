@@ -50,6 +50,17 @@ class TestUser(unittest.TestCase):
         newUser.update_wardrobe(newClothing)
         self.assertEqual(newUser.get_wardrobe(), [newClothing])
 
+    def test_curr_outfit(self):
+        newUser = User(" ")
+        fit1 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3)]
+        fit2 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2)]
+        fit3 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3), Clothing("Sneakers", "URL", 4)]
+        self.assertTrue(newUser.set_curr_outfit(fit1))
+        self.assertEqual(newUser.get_curr_outfit(), fit1)
+        self.assertFalse(newUser.set_curr_outfit(fit2), "There must be 4 clothing objects")
+        self.assertFalse(newUser.set_curr_outfit(fit3), "There must be 4 clothing objects")
+
+
 
     # test that classifyNew correctly adds a clothing item to user's wardrobe
     # in reality, when user takes photo, ImageData class will call upload_image on that image which sends
