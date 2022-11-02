@@ -3,6 +3,7 @@ from backend_functions import *
 import pymongo
 from pymongo import MongoClient
 
+# Testing the connection to the database
 def test_connection():   
     cluster = MongoClient("mongodb+srv://DGilb23:Bhhe2nsBOXwI4Axh@cluster0.mpb6ff1.mongodb.net/?retryWrites=true&w=majority")
     db = cluster["Clothing"]
