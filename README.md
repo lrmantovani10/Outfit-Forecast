@@ -3,7 +3,7 @@
 An app to generate outfit predictions based on one's wardrobe and current weather.
 
 Current class diagram
-![Class Diagram](updatedClassDiagram2.png)
+![Class Diagram](/Outfit-Forecast/class-diagrams/updatedClassDiagram2.png)
 
 Test suites used:
 
