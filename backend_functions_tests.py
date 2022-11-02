@@ -17,14 +17,15 @@ class TestUser(unittest.TestCase):
 
     def test_preferences(self):
         newUser = User(" ")
-        self.assertFalse(newUser.set_preference([-20, 70], "Temperature cannot be below -20 Farenheit")) 
-        self.assertFalse(newUser.set_preference([0, 130], "Temperature cannot be above 120 Farenheit"))
-        self.assertTrue(newUser.set_preference([-10, 120])) # Lower and upper bound included
-        self.assertEqual(newUser.get_preferences(), [[-10, 120]])
-        self.assertTrue(newUser.set_preference([0, 65]))
-        self.assertEqual(newUser.get_preferences(), [[-10, 120], [0, 65]])
-        self.assertFalse(newUser.set_preference([130], "Preference must be an array of 2 elements"))
-        self.assertFalse(newUser.set_preference([], "Preference must be an array of 2 elements"))
+        self.assertFalse(newUser.set_preference([0, -20, 70], "Temperature cannot be below -20 Farenheit")) 
+        self.assertFalse(newUser.set_preference([1, 0, 130], "Temperature cannot be above 120 Farenheit"))
+        self.assertTrue(newUser.set_preference([2, -10, 120])) # Lower and upper bound included
+        self.assertEqual(newUser.get_preferences(), [[2, -10, 120]])
+        self.assertTrue(newUser.set_preference([3, 0, 65]))
+        self.assertEqual(newUser.get_preferences(), [[2, -10, 120], [3, 0, 65]])
+        self.assertFalse(newUser.set_preference([130], "Preference must be an array of 3 elements"))
+        self.assertFalse(newUser.set_preference([], "Preference must be an array of 3 elements"))
+        self.assertFalse(newUser.set_preference([10, 10], "Preference must be an array of 3 elements"))
 
     # Location API returns latitude, longitude pair
     def test_location(self):
