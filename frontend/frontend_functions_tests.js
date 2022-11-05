@@ -190,3 +190,145 @@ test("dailyRecommender", () => {
         expect(envData.dailyReccomender(testCase[0])).toEqual(testCase[1])
     }
 })
+
+// *********** ImageData Tests *********** //
+// imageData contains a set of pictures, which are returned using getPictures()
+// we return a list of UIImage pictures using getPictures() and use this as input
+// 
+
+let pictures = frontend_functions.getPictures()
+
+test("upload", () => {
+    //this will run the upload image on the returned pictures from the Image_Data object
+    //if the size of the set is not 0, uploadImage() should return true
+    //if the size of the set is 0, uploadImage() should return false
+    
+    //below tests the above two cases, expecting true in the first case and false in the
+    // second case
+    if(size(pictures) > 0){ expect(frontend_functions.uploadImage(pictures)).toEqual(true) }
+    else { expect(frontend_functions.uploadImage(pictures_empty)).toEqual(false) }
+})
+
+
+// camera tests //
+// Take pictures, choose from gallery, and successfully store them for later retrieval
+
+// imageData contains one instance of a class called userCamera.
+// Within userCamera, we create an instance of React Native's "image-picker" class
+let imageData_x = new frontend_functions.userCamera() 
+// "image-picker" stores the current image, whether it be chosen from the gallery or
+// taken by the camera, in resourcePath. This is be the initial state of that,
+// which should be NULL or some null-identifying value.
+let initial_state = imageData_x.userCamera.state.resourcePath.data
+
+test("camera", () => {
+    // This will actually open up the camera on the phone running this code, which
+    // makes automatic testing rather difficult. The way I imagine it, when running
+    // this test, the user has to take a photo, and the code will then automatically
+    // test to see if that photo's data has been successfully stored.
+    imageData_x.userCamera.takePicture();
+    // Arbitrary nonsensical value that will only change if taking picture is successful
+    let new_state = -1 
+    if (imageData_x.userCamera.res.didCancel) {
+        console.log('User pressed cancel button');
+    } else if (imageData_x.userCamera.res.error) {
+        console.log('takePicture Error: ', res.error);
+    } else {
+        new_state = imageData_x.userCamera.state.resourcePath.data
+    }
+    expect((initial_state).not.toEqual(new_state))
+
+    // Similarly, auto-testing choosing from the gallery will be tricky because there
+    // is no way around making the user actually having to choose an actual image
+    // from their gallery to use the function. In this, I imagine the user selecting
+    // an image, which then should be successfully stored, overwriting the last image
+    imageData_x.userCamera.choosePicture();
+    // Arbitrary nonsensical value that will only change if taking picture is successful
+    let new_state2 = -1 
+    if (imageData_x.userCamera.res.didCancel) {
+        console.log('User pressed cancel button');
+    } else if (imageData_x.userCamera.res.error) {
+        console.log('choosePicture Error: ', res.error);
+    } else {
+        new_state2 = imageData_x.userCamera.state.resourcePath.data
+    }
+    expect((initial_state).not.toEqual(new_state2))
+    expect((new_state).not.toEqual(new_state2))
+
+    // At this point, we should assume that two images (one from taking a picture with
+    // the camera, the other from choosing one from the gallery) should be added to 
+    // imageData_x's 'pictures' variable. This will allow us to test it as such:
+
+    expect((imageData_x.getPictures[0]).toEqual(new_state))
+    expect((imageData_x.getPictures[1]).toEqual(new_state2))
+
+    // Testing updateImage, which replaces a certain image in imageData's pictures field
+
+    imageData_x.userCamera.takePicture();
+    if (imageData_x.userCamera.res.didCancel) {
+        console.log('User pressed cancel button');
+    } else if (imageData_x.userCamera.res.error) {
+        console.log('takePicture Error: ', res.error);
+    } else {
+        new_state3 = imageData_x.userCamera.state.resourcePath.data
+    }
+    imageData_x.updateImage(0, new_state3)
+    expect((imageData_x.getPictures[0]).toEqual(new_state3))
+})
+
+// *********** STORE SURVEY TESTS *********** //
+
+// Generate new dict of preferences for user
+user_x.Preferences = {}
+
+// inputs are clothing_ID, lower_bound, upper_bound
+var add_prefPairs = [
+    // NOTE: clothing_ID validation happens in Clothing class
+
+    // valid
+    [[0, 10, 25], true], 
+
+    // invalid, lower bound below lowest allowed temp
+    [[1, -20, 25], false],
+
+    // invalid, upper bound above highest allowed temp
+    [[2, 35, 145], false],
+
+    // invalid, lower bound greater than upper bound
+    [[3, 65, 25], false]
+]
+
+test("addPrefPairs", () => {
+    for (testCase of add_prefPairs) {
+        expect(user_x.Preferences.addPair(testCase[0])).toEqual(testCase[1])
+    }
+})
+
+user_x.Preferences.addPair(0, 10, 25);
+
+// inputs are clothing_ID, lower_bound, upper_bound
+var update_prefPairs = [
+    // NOTE: clothing_ID validation happens in Clothing class
+
+    // valid
+    [[0, 10, 35], true], 
+
+    // invalid, lower bound below lowest allowed temp
+    [[0, -20, 25], false],
+
+    // invalid, upper bound above highest allowed temp
+    [[0, 35, 145], false],
+
+    // invalid, lower bound greater than upper bound
+    [[0, 65, 25], false]
+]
+
+test("updatePrefPairs", () => {
+    for (testCase of update_prefPairs) {
+        expect(user_x.Preferences.updatePair(testCase[0])).toEqual(testCase[1])
+    }
+})
+
+
+
+
