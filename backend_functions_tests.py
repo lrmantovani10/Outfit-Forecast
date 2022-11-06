@@ -158,7 +158,7 @@ class TestClothing(unittest.TestCase):
 class TestEnviornmentalData(unittest.TestCase):
 
     def test_getWeather(self):
-        eObject = enviornmentalData()
+        eObject = EnviornmentalData()
         weatherProperties = eObject.getWeather()
         self.assertEqual(str(weatherProperties[0]), "<class 'int'>")
         self.assertEqual(str(weatherProperties[1]), "<class 'int'>")
