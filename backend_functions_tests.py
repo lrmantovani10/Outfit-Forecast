@@ -40,19 +40,19 @@ class TestConnection(unittest.TestCase):
 class TestUser(unittest.TestCase):
 
     def test_username(self):
-        newUser = User(" ")
+        newUser = User("a")
         self.assertFalse(newUser.setUsername("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm"), "Username is more than 32 characters") 
         self.assertFalse(newUser.setUsername(""), "Username is empty") 
         self.assertFalse(newUser.setUsername("123456"), "Username must have at least one letter") 
-        self.assertFalse(newUser.setUsername("abcd"), "Username must have at least 1 number") 
+        self.assertTrue(newUser.setUsername("abcd")) 
         self.assertTrue(newUser.setUsername("abcde12"))
         self.assertEqual(newUser.getUsername(), "abcde12")
+        self.assertFalse(newUser.setUsername("a "), "Username cannot have whitespace")
         self.assertFalse(newUser.setUsername("0123abcdefg"), "Username cannot start with a number") 
-        self.assertEqual(newUser.getUsername(), "abcde12")
         self.assertFalse(newUser.setUsername("abcdefg123!!"), "Username cannot have special characters") 
 
     def test_preferences(self):
-        newUser = User(" ")
+        newUser = User("a")
         self.assertFalse(newUser.setPreference([0, -20, 70]), "Temperature cannot be below -20 Farenheit")
         self.assertFalse(newUser.setPreference([1, 0, 130]), "Temperature cannot be above 120 Farenheit")
         self.assertTrue(newUser.setPreference([2, -10, 120])) # Lower and upper bound properly included
@@ -65,7 +65,7 @@ class TestUser(unittest.TestCase):
 
     # Location API returns latitude, longitude pair
     def test_location(self):
-        newUser = User(" ")
+        newUser = User("a")
         self.assertFalse(newUser.setLocation([-95, 70]), "Latitude must be between -90 and 90 degrees")
         self.assertFalse(newUser.setLocation([95, 70]), "Latitude must be between -90 and 90 degrees")
         self.assertFalse(newUser.setLocation([50, -182]), "Longitude must be between -180 and 180 degrees")
@@ -77,7 +77,7 @@ class TestUser(unittest.TestCase):
     
     # no set_wardrobe because classifyNew() will handle appending items to wardrobe
     def test_wardrobe(self):
-        newUser = User(" ")
+        newUser = User("a")
         self.assertEqual(newUser.getWardrobe(), [])
         test_img = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7"
         newClothing = Clothing("t-shirt", test_img, 0)
@@ -86,7 +86,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.getWardrobe(), [newClothing])
 
     def test_currOutfit(self):
-        newUser = User(" ")
+        newUser = User("a")
         fit1 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3)]
         fit2 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2)]
         fit3 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3), Clothing("Sneakers", "URL", 4)]
@@ -97,7 +97,7 @@ class TestUser(unittest.TestCase):
         self.assertFalse(newUser.setCurrOutfit(["jacket","shirt","jeans","shoes"]), "These are not clothing objects")
 
     def test_clothingHistory(self):
-        newUser = User(" ")
+        newUser = User("a")
         fit1 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3)]
         fit2 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2)]
         fit3 = [Clothing("Jacket", "URL", 0), Clothing("T-Shirt", "URL", 1), Clothing("Jeans", "URL", 2), Clothing("Sandals", "URL", 3), Clothing("Sneakers", "URL", 4)]
@@ -115,7 +115,7 @@ class TestUser(unittest.TestCase):
     # in reality, when user takes photo, ImageData class will call upload_image on that image which sends
     # it to the bucket, then gets the firebase URL and calls classifyNew with that URL
     def test_classifyNew(self):
-        newUser = User(" ")
+        newUser = User("a")
         self.assertEqual(newUser.getWardrobe(), [])
         # google vision api takes imageURL from firebase
         testImg = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater.jpg?alt=media&token=ded9d625-062e-4e61-bbdc-a3988104fb8b"

@@ -5,30 +5,51 @@ class User:
         self.username = username
         self.wardrobe = []
         self.clothingHistory = []
-        self.preferences = []
         self.currOutfit = []
-        #self.location = 
+        self.location = ()
 
+    # ------- getters -------
     def getUsername(self):
         return self.username
+    
+    def getWardrobe(self):
+        return self.wardrobe
 
+    def getLocation(self):
+        return self.location 
+
+    def getCurrOutfit(self):
+        return self.currOutfit   
+
+    def getClothingHistory(self):
+        return self.clothingHistory    
+
+    # -------  setters  -------
     ''' 
     - must be at most 32 characters
     - cannot be empty
-    - must have at least one letter and one number
+    - must have at least one letter
     - can't start with number
-    - can't have special characters 
+    - must be alphanumeric (no whitespaces or special characters)
     '''
     def setUsername(self, username):
-        if username.length() <= 32 and username.length > 0 and hasLetter(username) and hasDigit(username) and !username[0].isdigit() and !hasSpecial(username):
+        valid = False
+        #isalnum checks that it doesn't have whitespaces or special characters
+        if username.length() <= 32 and username.length > 0 and username.isalnum():
+            #can't be all digits, can't start with a digit
+            if username.isdigit() or username[0].isdigit():
+                return False
+            for c in username:
+                if c.isalpha(): #has at least one letter
+                    valid = True
+                    break
+        if valid:
             self.username = username
             return True
         else:
             return False
 
-    def getWardrobe(self):
-        return self.wardrobe
-
+    # must be of type clothing
     def updateWardrobe(self, clothingItem):
         if type(clothingItem) is Clothing:
             self.wardrobe.append(clothingItem)
@@ -36,32 +57,26 @@ class User:
         else:
             return False
 
-    def setPreference(self, prefArr):
-        return True
-
-    def getPreferences(self):
-        return self.preferences
-    
+    # must be of type
     def setLocation(self, locArr):
-        return True   
+        return True       
     
-    def getLocation(self):
-        return self.location         
-    
-    def getCurrOutfit(self):
-        return self.currOutfit          
-    
-    '''
-    need to make sure outfit is a list of clothing items
-    '''
+    # outfit must be a list of clothing items
     def updateClothingHistory(self, outfit):
-        return True   
-    
-    def getClothingHistory(self):
-        return self.clothingHistory         
+        if type(outfit) is list:
+            for x in outfit:
+                if type(x) is not Clothing:
+                    return False
+            self.clothingHistory.append(outfit)
+            return True   
+        else:
+            return False
 
+
+    # ------- ------- ------- ------- -------
+    
     def classifyNew(self, imgURL):
-        return    
+        return True
 
 
 class Clothing:
@@ -72,7 +87,7 @@ class Clothing:
         self.classification = ""
         self.imgURL = imgURL
 
-    # getters
+    # ------- getters -------
     def getObjectName(self):
         return self.objectName
 
@@ -88,7 +103,7 @@ class Clothing:
     def getImgURL(self):
         return self.imgURL
     
-    # setters
+    # ------- getters -------
     def setObjectName(self, name):
         return True
 
