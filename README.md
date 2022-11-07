@@ -18,6 +18,6 @@ Current class diagram
   
   New parameters: length at most 32, cannot be empty, alphanumeric but must have at least one letter, no special characters, no whitespaces, first char cannot be a digit
   
-- TestClothing class had constructor changed to also take in classification as an input.
+- TestClothing class had constructor changed to also take in classification as an input
 - test_classification for Clothing class had tests simplified to only allow top/bottom/shoes as possible classifications
-- Removed test_preferences for User class because we determined that only clothing objects should associate with preferences (prefPair class)
+- Removed test_preferences for User class because we determined that only Clothing objects should have preferences (also got rid of prefPair class in favor of just having a lower and upper bound on the temperature at which you will wear a piece of clothing in)
