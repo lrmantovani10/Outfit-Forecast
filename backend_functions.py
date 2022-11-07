@@ -1,4 +1,10 @@
-import pymongo
+#import pymongo
+import os
+from google.cloud import vision
+from google.cloud.vision_v1 import types
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'inspiring-list-367201-258ee5841906.json'
+
 
 class User:
     def __init__(self, username):
@@ -36,7 +42,7 @@ class User:
     def setUsername(self, username):
         valid = False
         #isalnum checks that it doesn't have whitespaces or special characters
-        if username.length() <= 32 and username.length > 0 and username.isalnum():
+        if len(username) <= 32 and len(username) > 0 and username.isalnum():
             #can't be all digits, can't start with a digit
             if username.isdigit() or username[0].isdigit():
                 return False
@@ -81,14 +87,25 @@ class User:
     parse classification (maybe preset categories and if it falls in one of those you take it)
     create clothing item
     call updateWardrobe on that clothing item
-    
+
     '''
     def classifyNew(self, imgURL):
         tops = ['t-shirt', 'shirt', 'jacket', 'sweater', 'coat', 'hoodie']
         bottoms = ['jeans', 'shorts', 'pants', 'skirt']
         shoes = ['shoe', 'footwear', 'sneakers', 'boots', 'heels']
 
-        return True
+        client = vision.ImageAnnotatorClient()
+        image = types.Image()
+        image.source.image_uri = imgURL
+        response_label = client.label_detection(image=image)
+        for label in response_label.label_annotations:
+            if label.description in tops:
+                new_item = 
+            elif label.description in bottoms:
+                new_item = 
+            elif label.description in shoes:
+                new_item = 
+        updateWardrobe(new_item)
 
 
 
