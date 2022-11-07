@@ -1,8 +1,10 @@
 import pymongo
+import re
 
 class User:
     def __init__(self, username):
-        self.username = username
+        if not self.setUsername(username):
+            self.username = ""
         self.wardrobe = []
         self.clothingHistory = []
         self.currOutfit = []
@@ -57,7 +59,7 @@ class User:
         else:
             return False
 
-    # must be of type
+    # must be of type _
     def setLocation(self, locArr):
         return True       
     
@@ -87,10 +89,11 @@ class User:
 
 
 class Clothing:
-    def __init__(self, name, imgURL, clothingID):
+    def __init__(self, name, classification, imgURL, clothingID):
+        # Trust constructor usage for now (depends on how front-end uses this)
         self.objectName = name
+        self.classification = classification
         self.clothingID = clothingID
-        self.classification = ""
         self.imgURL = imgURL
 
     # ------- getters -------
@@ -106,21 +109,15 @@ class Clothing:
     def getImgURL(self):
         return self.imgURL
     
-    # ------- getters -------
+    # ------- setters -------
     def setObjectName(self, name):
-        return True
-    
+        if isinstance(name, str) and name != "" and any(c.isalpha() for c in name):
+            self.objectName = name
+            return True
+        return False
+
     def setClassification(self, name):
-        return True
-
-
-class EnviornmentalData:
-    def __init__(self):
-        newUser = User("")
-        self.enviroData = newUser
-        
-    def getWeather():
-        return []
-
-
-
+        if name == "top" or name == "bottom" or name == "shoes":
+            self.classification = name
+            return True
+        return False
