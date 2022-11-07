@@ -1,4 +1,4 @@
-import pymongo
+# import pymongo
 import os
 from google.cloud import vision
 from google.cloud.vision_v1 import types
@@ -98,14 +98,14 @@ class User:
         image = types.Image()
         image.source.image_uri = imgURL
         response_label = client.label_detection(image=image)
-        for label in response_label.label_annotations:
-            if label.description in tops:
-                new_item = 
-            elif label.description in bottoms:
-                new_item = 
-            elif label.description in shoes:
-                new_item = 
-        updateWardrobe(new_item)
+        # for label in response_label.label_annotations:
+        #     if label.description in tops:
+        #         new_item = 
+        #     elif label.description in bottoms:
+        #         new_item = 
+        #     elif label.description in shoes:
+        #         new_item = 
+        # updateWardrobe(new_item)
 
     def dailyRecommender(self, weatherInput):
         # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
