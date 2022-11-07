@@ -107,7 +107,88 @@ class User:
                 new_item = 
         updateWardrobe(new_item)
 
+    def dailyRecommender(self, weatherInput):
+        # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
+        temp_min = weatherInput[0]
+        temp_max = weatherInput[1]
+        feels_like = weatherInput[2]
+        atmosphere = weatherInput[3]
 
+        minTopOuterRange = math.inf
+        minTopInnerRange = math.inf
+        minBottomRange = math.inf
+        minShoesRange = math.inf
+
+        topOuterConditionsMet = False
+        topInnerConditionsMet = False
+        bottomConditionsMet = False
+        shoesConditionsMet = False
+
+        output = [None, None, None, None]
+
+        # CURRENT ALGORITHM: CHOOSES CLOTHING ITEM WITH TIGHTEST (SMALLEST) SURVEY TEMPERATURE RANGE
+        # WHERE THE DAILY MAX AND MIN TEMPERATURES FALL INTO THAT RANGE
+
+        # accounts for some atmosphere conditions
+        # will never recommend outer top for feels_like >= 75
+
+        for item in self.getWardrobe():
+            lower = item.getLowerBound()
+            upper = item.getUpperBound()
+            if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                continue
+            range = upper - lower
+            if item.classification == "topOuter":
+                if feels_like >= 75:
+                    continue
+                if 'rain' in atmosphere or 'snow' in atmosphere:
+                    if 'jacket' not in item.getObjectName() and 'coat' not in item.getObjectName() and 'wind' not in item.getObjectName() and 'parka' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
+                        if topOuterConditionsMet:
+                            continue
+                    else:
+                        if not topOuterConditionsMet:
+                            topOuterConditionsMet = True
+                            output[0] = item
+                            minTopOuterRange = range
+
+                if range <= minTopOuterRange:
+                    output[0] = item
+                    minTopOuterRange = range
+            if item.classification == "topInner":
+                # no topInnerConditions yet, might add short/long sleeve in the future
+                if range <= minTopInnerRange:
+                    output[1] = item
+                    minTopInnerRange = range
+            if item.classification == "bottom":
+                if 'rain' in atmosphere or 'snow' in atmosphere:
+                    if 'short' in item.getObjectName():
+                        if bottomConditionsMet:
+                            continue
+                    else:
+                        if not bottomConditionsMet:
+                            bottomConditionsMet = True
+                            output[2] = item
+                            minBottomRange = range
+
+                if range <= minBottomRange:
+                    output[2] = item
+                    minBottomRange = range
+            if item.classification == "shoes":
+                if 'rain' in atmosphere or 'snow' in atmosphere:
+                    if 'boot' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
+                        if shoesConditionsMet:
+                            continue
+                    else:
+                        if not shoesConditionsMet:
+                            shoesConditionsMet = True
+                            output[3] = item
+                            minShoesRange = range
+
+                if range <= minShoesRange:
+                    output[3] = item
+                    minShoesRange = range
+
+        return output
 
 class Clothing:
     def __init__(self, name, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):
@@ -137,6 +218,12 @@ class Clothing:
     def getImgURL(self):
         return self.imgURL
     
+    def getLowerBound(self):
+        return self.lowerTempBound
+    
+    def getUpperBound(self):
+        return self.upperTempBound
+    
     # ------- setters -------
 
     def setBounds(self, lower, upper):
@@ -153,7 +240,7 @@ class Clothing:
         return False
 
     def setClassification(self, name):
-        if name == "top" or name == "bottom" or name == "shoes":
+        if name == "topOuter" or name == "topInner" or name == "bottom" or name == "shoes":
             self.classification = name
             return True
         return False

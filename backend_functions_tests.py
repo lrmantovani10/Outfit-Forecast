@@ -1,6 +1,7 @@
 import unittest
 from backend_functions import *
 
+
 # Tries to connect and insert to a mongodb database based on
 # Testing the connection to the database
 def connection_link_tester(link):
@@ -13,6 +14,7 @@ def connection_link_tester(link):
         return True
     except:
         return False
+
 
 class TestConnection(unittest.TestCase):
 
@@ -37,18 +39,20 @@ class TestConnection(unittest.TestCase):
         # This fake document should not exist
         self.assertFalse(collection.count_documents({'doesNotExist': 'Fake'}) > 0)
 
+
 class TestUser(unittest.TestCase):
 
     def test_username(self):
         newUser = User("a")
-        self.assertFalse(newUser.setUsername("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm"), "Username is more than 32 characters") 
-        self.assertFalse(newUser.setUsername(""), "Username is empty") 
-        self.assertFalse(newUser.setUsername("123456"), "Username must have at least one letter") 
-        self.assertTrue(newUser.setUsername("abcd")) 
+        self.assertFalse(newUser.setUsername("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm"),
+                         "Username is more than 32 characters")
+        self.assertFalse(newUser.setUsername(""), "Username is empty")
+        self.assertFalse(newUser.setUsername("123456"), "Username must have at least one letter")
+        self.assertTrue(newUser.setUsername("abcd"))
         self.assertTrue(newUser.setUsername("abcde12"))
         self.assertEqual(newUser.getUsername(), "abcde12")
         self.assertFalse(newUser.setUsername("a "), "Username cannot have whitespace")
-        self.assertFalse(newUser.setUsername("0123abcdefg"), "Username cannot start with a number") 
+        self.assertFalse(newUser.setUsername("0123abcdefg"), "Username cannot start with a number")
         self.assertFalse(newUser.setUsername("abcdefg123!!"), "Username cannot have special characters")
 
     # Location API returns latitude, longitude pair
@@ -62,34 +66,43 @@ class TestUser(unittest.TestCase):
         self.assertFalse(newUser.setLocation([]), "Location must have 2 values")
         self.assertTrue(newUser.setLocation([50, 65]))
         self.assertFalse(newUser.getLocation(), [50, 65])
-    
+
     # no set_wardrobe because classifyNew() will handle appending items to wardrobe
     def test_wardrobe(self):
         newUser = User("a")
         self.assertEqual(newUser.getWardrobe(), [])
         test_img = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7"
-        newClothing = Clothing("t-shirt", "top", test_img, 0)
+        newClothing = Clothing("t-shirt", "topInner", test_img, 0)
         self.assertTrue(newUser.updateWardrobe(newClothing))
         self.assertFalse(newUser.updateWardrobe("t-shirt"), "must update wardobe with clothing item")
         self.assertEqual(newUser.getWardrobe(), [newClothing])
 
     def test_currOutfit(self):
         newUser = User("a")
-        fit1 = [Clothing("Jacket", "top", "URL", 0), Clothing("T-Shirt", "top", "URL", 1), Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
-        fit2 = [Clothing("Jacket", "top", "URL", 0), Clothing("T-Shirt", "top", "URL", 1), Clothing("Jeans", "bottom", "URL", 2)]
-        fit3 = [Clothing("Jacket", "top", "URL", 0), Clothing("T-Shirt", "top", "URL", 1), Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3), Clothing("Sneakers", "shoes", "URL", 4)]
+        fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
+        fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2)]
+        fit3 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3),
+                Clothing("Sneakers", "shoes", "URL", 4)]
         self.assertTrue(newUser.setCurrOutfit(fit1))
         self.assertEqual(newUser.getCurrOutfit(), fit1)
         self.assertFalse(newUser.setCurrOutfit(fit2), "There must be 4 clothing objects")
         self.assertFalse(newUser.setCurrOutfit(fit3), "There must be 4 clothing objects")
-        self.assertFalse(newUser.setCurrOutfit(["jacket","shirt","jeans","shoes"]), "These are not clothing objects")
+        self.assertFalse(newUser.setCurrOutfit(["jacket", "shirt", "jeans", "shoes"]), "These are not clothing objects")
 
     def test_clothingHistory(self):
         newUser = User("a")
-        fit1 = [Clothing("Jacket", "top", "URL", 0), Clothing("T-Shirt", "top", "URL", 1), Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
-        fit2 = [Clothing("Jacket", "top", "URL", 0), Clothing("T-Shirt", "top", "URL", 1), Clothing("Jeans", "bottom", "URL", 2)]
-        fit3 = [Clothing("Jacket", "top", "URL", 0), Clothing("T-Shirt", "top", "URL", 1), Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3), Clothing("Sneakers", "shoes", "URL", 4)]
-        fit4 = [Clothing("Sweater", "top", "URL", 0), Clothing("Dress Shirt", "top", "URL", 1), Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
+        fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
+        fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2)]
+        fit3 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3),
+                Clothing("Sneakers", "shoes", "URL", 4)]
+        fit4 = [Clothing("Sweater", "topOuter", "URL", 0), Clothing("Dress Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
         self.assertTrue(newUser.updateClothingHistory(fit1))
         self.assertEqual(newUser.getClothingHistory(), [fit1])
         self.assertFalse(newUser.updateClothingHistory(fit2), "There must be 4 clothing objects in the fit")
@@ -108,33 +121,48 @@ class TestUser(unittest.TestCase):
         # google vision api takes imageURL from firebase
         testImg = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater.jpg?alt=media&token=ded9d625-062e-4e61-bbdc-a3988104fb8b"
         newUser.classifyNew(testImg)
-        testItem = Clothing("sweater", "top", testImg, 0)
+        testItem = Clothing("sweater", "topOuter", testImg, 0)
         updatedWardrobe = newUser.getWardrobe()
         self.assertEqual(updatedWardrobe, [testItem])
-        testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater" # faulty URL, which doesn't work
+        testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater"  # faulty URL, which doesn't work
         self.assertFalse(newUser.classifyNew(testImg2))
         self.assertEqual(newUser.getWardrobe(), [testItem])
 
 
 class TestClothing(unittest.TestCase):
-    
+
     def test_objectName(self):
-        newClothing = Clothing("t-shirt", "top", "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7", 0)
+        newClothing = Clothing("t-shirt", "topInner",
+                               "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
+                               0)
         self.assertEqual(newClothing.getObjectName(), "t-shirt")
         self.assertTrue(newClothing.setObjectName("t-shirt"))
-        self.assertFalse(newClothing.setObjectName(""), "objectName is empty") 
+        self.assertFalse(newClothing.setObjectName(""), "objectName is empty")
         self.assertFalse(newClothing.setObjectName("123456"), "objectName must have at least one letter")
-        self.assertFalse(newClothing.setObjectName(0), "objectName must be type string") 
+        self.assertFalse(newClothing.setObjectName(0), "objectName must be type string")
 
     def test_warmthRating(self):
-        newClothing = Clothing("t-shirt", "top", "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7", 0)
+        newClothing = Clothing("t-shirt", "topInner",
+                               "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
+                               0)
         self.assertEqual(newClothing.getWarmthRating(), 0)
         self.assertTrue(newClothing.setWarmthRating(0))
         self.assertFalse(newClothing.setWarmthRating("0"), "warmthRating must be type int")
 
     def test_classification(self):
-        newClothing = Clothing("t-shirt", "top", "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7", 0)
+        newClothing = Clothing("t-shirt", "topInner",
+                               "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
+                               0)
         self.assertTrue(newClothing.setClassification("bottom"))
         self.assertFalse(newClothing.setClassification("warm top"), "classification is not top/bottom/shoes")
         self.assertTrue(newClothing.setClassification("top"))
         self.assertEqual(newClothing.getClassification(), "top")
+
+    def test_bounds(self):
+        newClothing = Clothing("t-shirt", "topInner",
+                               "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
+                               0)
+        self.assertTrue(newClothing.setBounds(-20, 70))
+        self.assertFalse(newClothing.setBounds(-20), "Need lower and upper bound argument")
+        self.assertFalse(newClothing.setBounds(0, 130), "Temperature cannot be above 120 Farenheit")
+        self.assertFalse(newClothing.setBounds(-21, 100), "Temperature cannot be below -20 Farenheit")
