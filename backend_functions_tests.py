@@ -166,3 +166,6 @@ class TestClothing(unittest.TestCase):
         self.assertFalse(newClothing.setBounds(-20), "Need lower and upper bound argument")
         self.assertFalse(newClothing.setBounds(0, 130), "Temperature cannot be above 120 Farenheit")
         self.assertFalse(newClothing.setBounds(-21, 100), "Temperature cannot be below -20 Farenheit")
+
+if __name__ == '__main__':
+    unittest.main()
