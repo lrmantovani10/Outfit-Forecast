@@ -91,8 +91,10 @@ class Clothing:
     def __init__(self, name, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):
         self.objectName = ""
         self.setObjectName(name)
+
         self.classification = ""
         self.setClassification(classification)
+        
         self.clothingID = clothingID
         self.imgURL = imgURL
 
