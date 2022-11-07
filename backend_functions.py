@@ -201,6 +201,12 @@ class Clothing:
     def getImgURL(self):
         return self.imgURL
     
+    def getLowerBound(self):
+        return self.lowerTempBound
+    
+    def getUpperBound(self):
+        return self.upperTempBound
+    
     # ------- setters -------
 
     def setBounds(self, lower, upper):
