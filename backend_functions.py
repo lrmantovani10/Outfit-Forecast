@@ -75,14 +75,20 @@ class User:
 
     # ------- ------- ------- ------- -------
     
+    '''
+    call google vision api on imgURL to get back classification
+    parse classification (maybe preset categories and if it falls in one of those you take it)
+    create clothing item
+    call updateWardrobe on that clothing item
+    '''
     def classifyNew(self, imgURL):
         return True
+
 
 
 class Clothing:
     def __init__(self, name, imgURL, clothingID):
         self.objectName = name
-        self.warmthRating = 0
         self.clothingID = clothingID
         self.classification = ""
         self.imgURL = imgURL
@@ -90,9 +96,6 @@ class Clothing:
     # ------- getters -------
     def getObjectName(self):
         return self.objectName
-
-    def getWarmthRating(self):
-        return self.warmthRating
 
     def getClothingID(self):
         return self.clothingID
@@ -105,9 +108,6 @@ class Clothing:
     
     # ------- getters -------
     def setObjectName(self, name):
-        return True
-
-    def setWarmthRating(self, value):
         return True
     
     def setClassification(self, name):
