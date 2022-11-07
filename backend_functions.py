@@ -1,4 +1,4 @@
-#import pymongo
+import pymongo
 import os
 from google.cloud import vision
 from google.cloud.vision_v1 import types
