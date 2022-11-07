@@ -1,5 +1,4 @@
 import pymongo
-import re
 
 class User:
     def __init__(self, username):
@@ -89,12 +88,17 @@ class User:
 
 
 class Clothing:
-    def __init__(self, name, classification, imgURL, clothingID):
-        # Trust constructor usage for now (depends on how front-end uses this)
-        self.objectName = name
-        self.classification = classification
+    def __init__(self, name, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):
+        self.objectName = ""
+        self.setObjectName(name)
+        self.classification = ""
+        self.setClassification(classification)
         self.clothingID = clothingID
         self.imgURL = imgURL
+
+        self.lowerTempBound = -20
+        self.upperTempBound = 120
+        self.setBounds(lowerBound, upperBound)
 
     # ------- getters -------
     def getObjectName(self):
@@ -110,6 +114,14 @@ class Clothing:
         return self.imgURL
     
     # ------- setters -------
+
+    def setBounds(self, lower, upper):
+        if -20 <= lower <= 120 and -20 <= upper <= 120:
+            self.lowerTempBound = lower
+            self.upperTempBound = upper
+            return True
+        return False
+
     def setObjectName(self, name):
         if isinstance(name, str) and name != "" and any(c.isalpha() for c in name):
             self.objectName = name

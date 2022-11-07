@@ -49,19 +49,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.getUsername(), "abcde12")
         self.assertFalse(newUser.setUsername("a "), "Username cannot have whitespace")
         self.assertFalse(newUser.setUsername("0123abcdefg"), "Username cannot start with a number") 
-        self.assertFalse(newUser.setUsername("abcdefg123!!"), "Username cannot have special characters") 
-
-    def test_preferences(self):
-        newUser = User("a")
-        self.assertFalse(newUser.setPreference([0, -20, 70]), "Temperature cannot be below -20 Farenheit")
-        self.assertFalse(newUser.setPreference([1, 0, 130]), "Temperature cannot be above 120 Farenheit")
-        self.assertTrue(newUser.setPreference([2, -10, 120])) # Lower and upper bound properly included
-        self.assertEqual(newUser.getPreferences(), [[2, -10, 120]])
-        self.assertTrue(newUser.setPreference([3, 0, 65]))
-        self.assertEqual(newUser.getPreferences(), [[2, -10, 120], [3, 0, 65]])
-        self.assertFalse(newUser.setPreference([130]), "Preference must be an array of 3 elements")
-        self.assertFalse(newUser.setPreference([]), "Preference must be an array of 3 elements")
-        self.assertFalse(newUser.setPreference([10, 10]), "Preference must be an array of 3 elements")
+        self.assertFalse(newUser.setUsername("abcdefg123!!"), "Username cannot have special characters")
 
     # Location API returns latitude, longitude pair
     def test_location(self):
@@ -150,4 +138,3 @@ class TestClothing(unittest.TestCase):
         self.assertFalse(newClothing.setClassification("warm top"), "classification is not top/bottom/shoes")
         self.assertTrue(newClothing.setClassification("top"))
         self.assertEqual(newClothing.getClassification(), "top")
-        
