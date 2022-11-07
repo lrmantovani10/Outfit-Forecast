@@ -20,3 +20,4 @@ Current class diagram
   
 - TestClothing class had constructor changed to also take in classification as an input.
 - test_classification for Clothing class had tests simplified to only allow top/bottom/shoes as possible classifications
+- Removed test_preferences for User class because we determined that only clothing objects should associate with preferences (prefPair class)
