@@ -21,3 +21,20 @@ Current class diagram
 - TestClothing class had constructor changed to also take in classification as an input
 - test_classification for Clothing class had tests simplified to only allow topInner/topOuter/bottom/shoes as possible classifications
 - Removed test_preferences for User class because we determined that only Clothing objects should have preferences (also got rid of prefPair class in favor of just having a lower and upper bound on the temperature at which you will wear a piece of clothing in)
+
+<ins>How to compile:</ins>
+
+<ins>How to run code:</ins>
+
+<ins>How to run the unit test cases:</ins>
+
+run make setup to download the requirements needed
+run make tests to run tests
+
+<ins>Acceptance tests:</ins>
+
+<ins>Implementation Description:</ins>
+
+<ins>Work Distribution:</ins>
+
+<ins>Peer Evaluation:</ins>
