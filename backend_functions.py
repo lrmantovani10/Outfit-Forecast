@@ -4,7 +4,7 @@ from google.cloud.vision_v1 import types
 import pymongo
 import pickle
 from bson.binary import Binary
-from zoneinfo import ZoneInfo
+# from zoneinfo import ZoneInfo
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'inspiring-list-367201-258ee5841906.json'
 
@@ -88,10 +88,24 @@ class User:
     # outfit must be a list of clothing items
     def updateClothingHistory(self, outfit):
         if type(outfit) is list:
+            if (len(outfit) != 4):
+                return False
             for x in outfit:
                 if type(x) is not Clothing:
                     return False
             self.clothingHistory.append(outfit)
+            return True   
+        else:
+            return False
+
+    def setCurrOutfit(self, outfit):
+        if type(outfit) is list:
+            if (len(outfit) != 4):
+                return False
+            for x in outfit:
+                if type(x) is not Clothing:
+                    return False
+            self.currOutfit = outfit
             return True   
         else:
             return False
