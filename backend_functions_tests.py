@@ -43,7 +43,7 @@ class TestConnection(unittest.TestCase):
 class TestUser(unittest.TestCase):
 
     def test_username(self):
-        newUser = User("a")
+        newUser = User("a", [], [], [], [])
         self.assertFalse(newUser.setUsername("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm"),
                          "Username is more than 32 characters")
         self.assertFalse(newUser.setUsername(""), "Username is empty")
@@ -57,7 +57,7 @@ class TestUser(unittest.TestCase):
 
     # Location API returns latitude, longitude pair
     def test_location(self):
-        newUser = User("a")
+        newUser = User("a", [], [], [], [])
         self.assertFalse(newUser.setLocation([-95, 70]), "Latitude must be between -90 and 90 degrees")
         self.assertFalse(newUser.setLocation([95, 70]), "Latitude must be between -90 and 90 degrees")
         self.assertFalse(newUser.setLocation([50, -182]), "Longitude must be between -180 and 180 degrees")
@@ -65,11 +65,11 @@ class TestUser(unittest.TestCase):
         self.assertFalse(newUser.setLocation([-182]), "Location must have 2 values")
         self.assertFalse(newUser.setLocation([]), "Location must have 2 values")
         self.assertTrue(newUser.setLocation([50, 65]))
-        self.assertFalse(newUser.getLocation(), [50, 65])
+        self.assertTrue(newUser.getLocation(), [50, 65])
 
     # no set_wardrobe because classifyNew() will handle appending items to wardrobe
     def test_wardrobe(self):
-        newUser = User("a")
+        newUser = User("a", [], [], [], [])
         self.assertEqual(newUser.getWardrobe(), [])
         test_img = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7"
         newClothing = Clothing("t-shirt", "topInner", test_img, 0)
@@ -78,7 +78,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.getWardrobe(), [newClothing])
 
     def test_currOutfit(self):
-        newUser = User("a")
+        newUser = User("a", [], [], [], [])
         fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
                 Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
         fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
@@ -93,7 +93,7 @@ class TestUser(unittest.TestCase):
         self.assertFalse(newUser.setCurrOutfit(["jacket", "shirt", "jeans", "shoes"]), "These are not clothing objects")
 
     def test_clothingHistory(self):
-        newUser = User("a")
+        newUser = User("a", [], [], [], [])
         fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
                 Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
         fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
@@ -116,7 +116,7 @@ class TestUser(unittest.TestCase):
     # in reality, when user takes photo, ImageData class will call upload_image on that image which sends
     # it to the bucket, then gets the firebase URL and calls classifyNew with that URL
     def test_classifyNew(self):
-        newUser = User("a")
+        newUser = User("a", [], [], [], [])
         self.assertEqual(newUser.getWardrobe(), [])
         # google vision api takes imageURL from firebase
         testImg = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater.jpg?alt=media&token=ded9d625-062e-4e61-bbdc-a3988104fb8b"

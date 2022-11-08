@@ -74,10 +74,16 @@ class User:
         else:
             return False
 
-    # must be of type _
+    # must be of type [latitude, longitude]
     def setLocation(self, locArr):
-        return True       
-    
+        if len(locArr) == 2:
+            if locArr[0]>= -90 and locArr[0] <= 90 and locArr[1] >= -180 and locArr[1] <= 180:
+                self.location = locArr
+                return True
+            else:
+                return False
+        return False
+
     # outfit must be a list of clothing items
     def updateClothingHistory(self, outfit):
         if type(outfit) is list:
