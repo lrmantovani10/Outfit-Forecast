@@ -1,19 +1,27 @@
-# import pymongo
 import os
 from google.cloud import vision
 from google.cloud.vision_v1 import types
+import pymongo
+import pickle
+from bson.binary import Binary
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'inspiring-list-367201-258ee5841906.json'
 
+link = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
 
+client = pymongo.MongoClient(link)
+userDB = client["User"]
+userCollection = userDB["Test"]
+
+# only user setters need to access and modify db
 class User:
-    def __init__(self, username):
-        if not self.setUsername(username):
-            self.username = ""
-        self.wardrobe = []
-        self.clothingHistory = []
-        self.currOutfit = []
-        self.location = ()
+    def __init__(self, username, wardrobe, clothingHistory, currOutfit, location):
+        # realized duplicate username check do not need to happen here, only on front-end route where the user is originally created
+        self.username = username
+        self.wardrobe = wardrobe
+        self.clothingHistory = clothingHistory
+        self.currOutfit = currOutfit
+        self.location = location
 
     # ------- getters -------
     def getUsername(self):
@@ -39,6 +47,8 @@ class User:
     - can't start with number
     - must be alphanumeric (no whitespaces or special characters)
     '''
+
+    # user can't change their username, this is for internal use
     def setUsername(self, username):
         valid = False
         #isalnum checks that it doesn't have whitespaces or special characters
@@ -89,7 +99,7 @@ class User:
     call updateWardrobe on that clothing item
 
     '''
-    def classifyNew(self, imgURL):
+    def classifyNew(self, imgURL, lower, upper):
         tops = ['t-shirt', 'shirt', 'jacket', 'sweater', 'coat', 'hoodie']
         bottoms = ['jeans', 'shorts', 'pants', 'skirt']
         shoes = ['shoe', 'footwear', 'sneakers', 'boots', 'heels']
@@ -226,6 +236,7 @@ class Clothing:
     
     # ------- setters -------
 
+    # assume that the setters are called once by classifyNew and never again (below)
     def setBounds(self, lower, upper):
         if -20 <= lower <= 120 and -20 <= upper <= 120:
             self.lowerTempBound = lower
