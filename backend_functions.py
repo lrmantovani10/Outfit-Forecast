@@ -116,19 +116,22 @@ class User:
         image.source.image_uri = imgURL
         response_label = client.label_detection(image=image)
         for label in response_label.label_annotations:
-            print({'label': label.description, 'score': label.score})
-            if label.description in topOuter:
-                newItem = Clothing(label.description, "topOuter", imgURL, 0)
+            # print({'label': label.description, 'score': label.score})
+            if label.description.lower() in topOuter:
+                newItem = Clothing(label.description.lower(), "topOuter", imgURL, 0)
                 break
-            elif label.description in topInner: 
-                newItem = Clothing(label.description, "topInner", imgURL, 0)
-            elif label.description in bottoms: 
-                newItem = Clothing(label.description, "bottom", imgURL, 0)
-            elif label.description in shoes: 
-                newItem = Clothing(label.description, "shoes", imgURL, 0)
+            elif label.description.lower() in topInner: 
+                newItem = Clothing(label.description.lower(), "topInner", imgURL, 0)
+                break
+            elif label.description.lower() in bottoms: 
+                newItem = Clothing(label.description.lower(), "bottom", imgURL, 0)
+                break
+            elif label.description.lower() in shoes: 
+                newItem = Clothing(label.description.lower(), "shoes", imgURL, 0)
+                break
             else:
                 return "Could not classiffy the Image"
-        self.wardrobe.append(newItem)
+        self.wardrobe.append(0)
 
     def dailyRecommender(self, weatherInput):
         # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
