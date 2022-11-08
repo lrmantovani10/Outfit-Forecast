@@ -120,15 +120,16 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.getWardrobe(), [])
         # google vision api takes imageURL from firebase
         testImg = "gs://first-bucket-example/shoes.jpg"
-        newUser.classifyNew(testImg, -20, 120)
         testItem = Clothing("footwear", "shoes", testImg, "a_0")
+        self.assertEqual(newUser.classifyNew(testImg, -20, 120), "Image Classified: footwear")
         updatedWardrobe = newUser.getWardrobe()
-        # print(newUser.getWardrobe())
         self.assertEqual(updatedWardrobe, [testItem.clothingID])
-        # self.assertEqual
-        # testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater"  # faulty URL, which doesn't work
-        # self.assertFalse(newUser.classifyNew(testImg2))
-        # self.assertEqual(newUser.getWardrobe(), [testItem])
+        testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater"  # faulty URL, which doesn't work
+        self.assertEqual(newUser.classifyNew(testImg2, -20, 120), "API Error")
+        self.assertEqual(newUser.getWardrobe(), [testItem.clothingID])
+        testImg3 = "gs://first-bucket-example/t-shirt.jpg"
+        self.assertEqual(newUser.classifyNew(testImg3, -20, 120), "Image Classified: t-shirt")
+        self.assertEqual(newUser.getWardrobe(), ["a_0", "a_1"])
 
 
 class TestClothing(unittest.TestCase):

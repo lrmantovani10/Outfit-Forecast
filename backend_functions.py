@@ -101,7 +101,7 @@ class User:
     
     '''
     call google vision api on imgURL to get back classification
-    parse classification (maybe preset categories and if it falls in one of those you take it)
+    parse classification (preset categories and if it falls in one of those you take it)
     create clothing item
     call updateWardrobe on that clothing item
 
@@ -116,22 +116,31 @@ class User:
         image = types.Image()
         image.source.image_uri = imgURL
         response_label = client.label_detection(image=image)
+        found = False
+        if 'error' in response_label:
+            return "API Error"
         for label in response_label.label_annotations:
-            if label.description.lower() in topOuter:
-                newItem = Clothing(label.description.lower(), "topOuter", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+            lab = label.description.lower()
+            if lab in topOuter:
+                newItem = Clothing(lab, "topOuter", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+                found = True
                 break
-            elif label.description.lower() in topInner: 
-                newItem = Clothing(label.description.lower(), "topInner", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+            elif lab in topInner: 
+                newItem = Clothing(lab, "topInner", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+                found = True
                 break
-            elif label.description.lower() in bottoms: 
-                newItem = Clothing(label.description.lower(), "bottom", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+            elif lab in bottoms: 
+                newItem = Clothing(lab, "bottom", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+                found = True
                 break
-            elif label.description.lower() in shoes: 
-                newItem = Clothing(label.description.lower(), "shoes", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+            elif lab in shoes: 
+                newItem = Clothing(lab, "shoes", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+                found = True
                 break
-            else:
-                return "Could not classify the Image"
+        if found == False:
+            return "Could not classify the Image"
         self.wardrobe.append(newItem.getClothingID())
+        return "Image Classified: " + lab
 
     def dailyRecommender(self, weatherInput):
         # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
