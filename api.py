@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import flask
 import backend_functions as back
 import json
 
