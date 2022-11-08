@@ -23,27 +23,37 @@ Current class diagram
 - Removed test_preferences for User class because we determined that only Clothing objects should have preferences (also got rid of prefPair class in favor of just having a lower and upper bound on the temperature at which you will wear a piece of clothing in)
 
 <ins>How to compile:</ins>
+
 No need to compile
 
 <ins>How to run code:</ins>
+
 cd 3b
+
 python3 backend_functions.py
 
 <ins>How to run the unit test cases:</ins>
+
 run make setup to download the requirements needed
+
 run make tests to run tests
 
 <ins>Implementation Description:</ins>
+
 User class:
 - getters and setters
 - classifyNew() which takes in image URL, lower bound, and upper bound (sent from front end) and calls Google Vision API on the image. Gets the classification from Google Vision API, creates a new clothing object accordingly, adds it to the user's wardrobe
 - dailyRecommender()
+
 Clothing class:
 - getters and setters
 
 <ins>Work Distribution:</ins>
+
 Gautam and Perene: User class getter and setters and classifyNew()
+
 Leo and Daniel:
+
 All: Flask API setup
 
 <ins>Peer Evaluation:</ins>
