@@ -28,7 +28,21 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere):
         newItem = Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerBound'], item['upperBound'])
         wardrobe.append(newItem)
         
-    user = back.User(match['username'], wardrobe, match['clothingHistory'], match['currOutfit'], match['location'])
+    clothingHistoryDict = match['clothingHistory']
+    clothingHistory = []
+    for item in clothingHistoryDict:
+        fit = []
+        for i in range(4):
+            fit.append(Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'], item[i]['lowerBound'], item[i]['upperBound']))
+        clothingHistory.append(fit)
+        
+    currOutfitDict = match['currOutfit']
+    currOutfit = []
+    for item in currOutfitDict:
+        newItem = Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerBound'], item['upperBound'])
+        currOutfit.append(newItem)
+    
+    user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
 
     output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere])
     forJsonOutput = []
@@ -45,8 +59,22 @@ def classifyNew(username, URL, lower, upper):
     for item in wardrobeDict:
         newItem = Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerBound'], item['upperBound'])
         wardrobe.append(newItem)
+        
+    clothingHistoryDict = match['clothingHistory']
+    clothingHistory = []
+    for item in clothingHistoryDict:
+        fit = []
+        for i in range(4):
+            fit.append(Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'], item[i]['lowerBound'], item[i]['upperBound']))
+        clothingHistory.append(fit)
+        
+    currOutfitDict = match['currOutfit']
+    currOutfit = []
+    for item in currOutfitDict:
+        newItem = Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerBound'], item['upperBound'])
+        currOutfit.append(newItem)
     
-    user = back.User(match['username'], wardrobe, match['clothingHistory'], match['currOutfit'], match['location'])
+    user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
 
     # Returns a status string (like below)
     return user.classifyNew(URL, lower, upper)
