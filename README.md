@@ -29,6 +29,7 @@ Current class diagram
 <ins>How to run the unit test cases:</ins>
 
 run make setup to download the requirements needed
+
 run make tests to run tests
 
 <ins>Acceptance tests:</ins>
