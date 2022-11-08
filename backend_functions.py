@@ -130,7 +130,7 @@ class User:
                 newItem = Clothing(label.description.lower(), "shoes", imgURL, 0)
                 break
             else:
-                return "Could not classiffy the Image"
+                return "Could not classify the Image"
         self.wardrobe.append(0)
 
     def dailyRecommender(self, weatherInput):
