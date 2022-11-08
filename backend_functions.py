@@ -121,7 +121,7 @@ class User:
 
     '''
     def classifyNew(self, imgURL, lower, upper):
-        topOuter = ['jacket', 'sweater', 'coat', 'hoodie']
+        topOuter = ['jacket', 'sweater', 'coat', 'hoodie', 'vest']
         topInner = ['t-shirt', 'shirt']
         bottoms = ['jeans', 'shorts', 'pants', 'skirt']
         shoes = ['shoe', 'footwear', 'sneakers', 'boots', 'heels']
@@ -153,7 +153,7 @@ class User:
                 break
         if found == False:
             return "Could not classify the Image"
-        self.wardrobe.append(newItem.getClothingID())
+        self.wardrobe.append(newItem)
         return "Image Classified: " + lab
 
     def dailyRecommender(self, weatherInput):
@@ -236,7 +236,8 @@ class User:
                 if range <= minShoesRange:
                     output[3] = item
                     minShoesRange = range
-
+        self.clothingHistory.append(output)
+        self.currOutfit = output
         return output
 
 class Clothing:
