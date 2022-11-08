@@ -117,22 +117,21 @@ class User:
         image.source.image_uri = imgURL
         response_label = client.label_detection(image=image)
         for label in response_label.label_annotations:
-            # print({'label': label.description, 'score': label.score})
             if label.description.lower() in topOuter:
-                newItem = Clothing(label.description.lower(), "topOuter", imgURL, 0)
+                newItem = Clothing(label.description.lower(), "topOuter", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
                 break
             elif label.description.lower() in topInner: 
-                newItem = Clothing(label.description.lower(), "topInner", imgURL, 0)
+                newItem = Clothing(label.description.lower(), "topInner", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
                 break
             elif label.description.lower() in bottoms: 
-                newItem = Clothing(label.description.lower(), "bottom", imgURL, 0)
+                newItem = Clothing(label.description.lower(), "bottom", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
                 break
             elif label.description.lower() in shoes: 
-                newItem = Clothing(label.description.lower(), "shoes", imgURL, 0)
+                newItem = Clothing(label.description.lower(), "shoes", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
                 break
             else:
                 return "Could not classify the Image"
-        self.wardrobe.append(0)
+        self.wardrobe.append(newItem.getClothingID())
 
     def dailyRecommender(self, weatherInput):
         # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
