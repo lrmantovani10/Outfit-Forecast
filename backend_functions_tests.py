@@ -121,10 +121,11 @@ class TestUser(unittest.TestCase):
         # google vision api takes imageURL from firebase
         testImg = "gs://first-bucket-example/shoes.jpg"
         newUser.classifyNew(testImg, -20, 120)
-        testItem = Clothing("footwear", "shoes", testImg, 0)
+        testItem = Clothing("footwear", "shoes", testImg, "a_0")
         updatedWardrobe = newUser.getWardrobe()
-        print(newUser.getWardrobe())
+        # print(newUser.getWardrobe())
         self.assertEqual(updatedWardrobe, [testItem.clothingID])
+        # self.assertEqual
         # testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater"  # faulty URL, which doesn't work
         # self.assertFalse(newUser.classifyNew(testImg2))
         # self.assertEqual(newUser.getWardrobe(), [testItem])
