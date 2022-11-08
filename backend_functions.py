@@ -120,7 +120,7 @@ class User:
 
     '''
     def classifyNew(self, imgURL, lower, upper):
-        topOuter = ['jacket', 'sweater', 'coat', 'hoodie', 'vest']
+        topOuter = ['jacket', 'sweater', 'coat', 'hoodie']
         topInner = ['t-shirt', 'shirt']
         bottoms = ['jeans', 'shorts', 'pants', 'skirt']
         shoes = ['shoe', 'footwear', 'sneakers', 'boots', 'heels']
@@ -135,19 +135,19 @@ class User:
         for label in response_label.label_annotations:
             lab = label.description.lower()
             if lab in topOuter:
-                newItem = Clothing(lab, "topOuter", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+                newItem = Clothing(lab, "topOuter", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())), lower, upper)
                 found = True
                 break
             elif lab in topInner: 
-                newItem = Clothing(lab, "topInner", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+                newItem = Clothing(lab, "topInner", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())), lower, upper)
                 found = True
                 break
             elif lab in bottoms: 
-                newItem = Clothing(lab, "bottom", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+                newItem = Clothing(lab, "bottom", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())), lower, upper)
                 found = True
                 break
             elif lab in shoes: 
-                newItem = Clothing(lab, "shoes", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())))
+                newItem = Clothing(lab, "shoes", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())), lower, upper)
                 found = True
                 break
         if found == False:

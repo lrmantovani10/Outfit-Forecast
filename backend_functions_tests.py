@@ -15,6 +15,16 @@ def connection_link_tester(link):
     except:
         return False
 
+def clothingItemEquals(obj1, obj2):
+    if obj1.getObjectName() == obj2.getObjectName() \
+    and obj1.getClassification() == obj2.getClassification() \
+    and obj1.getImgURL() == obj2.getImgURL() \
+    and obj1.getClothingID() == obj2.getClothingID()\
+    and obj1.getLowerBound() == obj2.getLowerBound()\
+    and obj1.getUpperBound() == obj2.getUpperBound():
+        return True
+    else:
+        return False
 
 class TestConnection(unittest.TestCase):
 
@@ -120,16 +130,18 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.getWardrobe(), [])
         # google vision api takes imageURL from firebase
         testImg = "gs://first-bucket-example/shoes.jpg"
-        testItem = Clothing("footwear", "shoes", testImg, "a_0")
+        testItem = Clothing("footwear", "shoes", testImg, "a_0", -20, 120)
         self.assertEqual(newUser.classifyNew(testImg, -20, 120), "Image Classified: footwear")
         updatedWardrobe = newUser.getWardrobe()
-        self.assertEqual(updatedWardrobe, [testItem.clothingID])
+        # print(updatedWardrobe.__dict__)
+        self.assertTrue(clothingItemEquals(updatedWardrobe[0], testItem))
         testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater"  # faulty URL, which doesn't work
         self.assertEqual(newUser.classifyNew(testImg2, -20, 120), "API Error")
-        self.assertEqual(newUser.getWardrobe(), [testItem.clothingID])
+        self.assertTrue(clothingItemEquals(updatedWardrobe[0], testItem))
         testImg3 = "gs://first-bucket-example/t-shirt.jpg"
+        testItem3 = Clothing("t-shirt", "topInner", testImg3, "a_1", -20, 120)
         self.assertEqual(newUser.classifyNew(testImg3, -20, 120), "Image Classified: t-shirt")
-        self.assertEqual(newUser.getWardrobe(), ["a_0", "a_1"])
+        self.assertTrue(clothingItemEquals(newUser.getWardrobe()[1], testItem3))
 
 
 class TestClothing(unittest.TestCase):
