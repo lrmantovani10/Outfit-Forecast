@@ -11,6 +11,10 @@ userCollection = userDB["Test"]
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
+@app.route('/')
+def index():
+    return "<h1> Deployed to Heroku</h1>"
+
 @app.route('/dailyRecommender/<username>/<temp_min>/<temp_max>/<feels_like>/<atmosphere>')
 def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere):
     match = userCollection.find({'username': username})[0]
@@ -43,4 +47,5 @@ def createUser(username):
         return "User created"
     return "Username taken"
 
-app.run()
+if __name__ == '__main__':
+    app.run()
