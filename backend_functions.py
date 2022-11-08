@@ -106,7 +106,8 @@ class User:
 
     '''
     def classifyNew(self, imgURL, lower, upper):
-        tops = ['t-shirt', 'shirt', 'jacket', 'sweater', 'coat', 'hoodie']
+        topOuter = ['jacket', 'sweater', 'coat', 'hoodie']
+        topInner = ['t-shirt', 'shirt']
         bottoms = ['jeans', 'shorts', 'pants', 'skirt']
         shoes = ['shoe', 'footwear', 'sneakers', 'boots', 'heels']
 
@@ -114,14 +115,20 @@ class User:
         image = types.Image()
         image.source.image_uri = imgURL
         response_label = client.label_detection(image=image)
-        # for label in response_label.label_annotations:
-        #     if label.description in tops:
-        #         new_item = 
-        #     elif label.description in bottoms:
-        #         new_item = 
-        #     elif label.description in shoes:
-        #         new_item = 
-        # updateWardrobe(new_item)
+        for label in response_label.label_annotations:
+            print({'label': label.description, 'score': label.score})
+            if label.description in topOuter:
+                newItem = Clothing(label.description, "topOuter", imgURL, 0)
+                break
+            elif label.description in topInner: 
+                newItem = Clothing(label.description, "topInner", imgURL, 0)
+            elif label.description in bottoms: 
+                newItem = Clothing(label.description, "bottom", imgURL, 0)
+            elif label.description in shoes: 
+                newItem = Clothing(label.description, "shoes", imgURL, 0)
+            else:
+                return "Could not classiffy the Image"
+        self.wardrobe.append(newItem)
 
     def dailyRecommender(self, weatherInput):
         # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
