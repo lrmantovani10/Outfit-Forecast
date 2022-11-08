@@ -1,4 +1,4 @@
-from flask import flask
+from flask import Flask
 import backend_functions as back
 import json
 
@@ -8,7 +8,7 @@ client = back.pymongo.MongoClient(link)
 userDB = client["User"]
 userCollection = userDB["Test"]
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 app.config["DEBUG"] = True
 
 @app.route('/')
