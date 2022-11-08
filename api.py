@@ -17,9 +17,18 @@ def index():
 
 @app.route('/dailyRecommender/<username>/<temp_min>/<temp_max>/<feels_like>/<atmosphere>')
 def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere):
-    match = userCollection.find({'username': username})[0]
-
-    user = back.User(match['username'], match['wardrobe'], match['clothingHistory'], match['currOutfit'], match['location'])
+    try:
+        match = userCollection.find({'username': username})[0]
+    except:
+        return "Invalid username"
+    
+    wardrobeDict = match['wardrobe']
+    wardrobe = []
+    for item in wardrobeDict:
+        newItem = Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerBound'], item['upperBound'])
+        wardrobe.append(newItem)
+        
+    user = back.User(match['username'], wardrobe, match['clothingHistory'], match['currOutfit'], match['location'])
 
     output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere])
     forJsonOutput = []
@@ -30,8 +39,14 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere):
 @app.route('/classifyNew/<username>/<URL>/<lower>/<upper>')
 def classifyNew(username, URL, lower, upper):
     match = userCollection.find({'username': username})[0]
-
-    user = back.User(match['username'], match['wardrobe'], match['clothingHistory'], match['currOutfit'], match['location'])
+    
+    wardrobeDict = match['wardrobe']
+    wardrobe = []
+    for item in wardrobeDict:
+        newItem = Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerBound'], item['upperBound'])
+        wardrobe.append(newItem)
+    
+    user = back.User(match['username'], wardrobe, match['clothingHistory'], match['currOutfit'], match['location'])
 
     # Returns a status string (like below)
     return user.classifyNew(URL, lower, upper)
