@@ -4,6 +4,7 @@ from google.cloud.vision_v1 import types
 import pymongo
 import pickle
 from bson.binary import Binary
+from zoneinfo import ZoneInfo
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'inspiring-list-367201-258ee5841906.json'
 
