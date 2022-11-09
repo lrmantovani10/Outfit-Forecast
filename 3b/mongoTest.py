@@ -27,3 +27,44 @@ userCollection = db["Test"]
 
 # Removes last element from array
 # userCollection.update_one({'username': 'leo'}, {'$pop': {'clothingHistory': -1}})
+
+username = 'leo'
+temp_min = '65'
+temp_max = '60'
+feels_like = '63'
+atmosphere = 'cloudy'
+match = userCollection.find({'username': username})[0]
+
+wardrobeDict = match['wardrobe']
+wardrobe = []
+for item in wardrobeDict:
+    newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
+                       item['lowerTempBound'], item['upperTempBound'])
+    wardrobe.append(newItem)
+
+clothingHistoryDict = match['clothingHistory']
+clothingHistory = []
+for item in clothingHistoryDict:
+    fit = []
+    for i in range(4):
+        fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'],
+                            item[i]['lowerTempBound'], item[i]['upperTempBound']))
+    clothingHistory.append(fit)
+
+currOutfitDict = match['currOutfit']
+currOutfit = []
+for item in currOutfitDict:
+    newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
+                       item['lowerTempBound'], item['upperTempBound'])
+    currOutfit.append(newItem)
+
+print(wardrobe)
+print(clothingHistory)
+print(currOutfit)
+# user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
+#
+# output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere])
+# forJsonOutput = []
+# for elem in output:
+#     forJsonOutput.append(elem.__dict__)
+# return json.dumps(forJsonOutput)

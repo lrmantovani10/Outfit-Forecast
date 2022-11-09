@@ -25,7 +25,7 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere):
     wardrobeDict = match['wardrobe']
     wardrobe = []
     for item in wardrobeDict:
-        newItem = Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerBound'], item['upperBound'])
+        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerTempBound'], item['upperTempBound'])
         wardrobe.append(newItem)
         
     clothingHistoryDict = match['clothingHistory']
@@ -33,13 +33,13 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere):
     for item in clothingHistoryDict:
         fit = []
         for i in range(4):
-            fit.append(Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'], item[i]['lowerBound'], item[i]['upperBound']))
+            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
         clothingHistory.append(fit)
         
     currOutfitDict = match['currOutfit']
     currOutfit = []
     for item in currOutfitDict:
-        newItem = Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerBound'], item['upperBound'])
+        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerTempBound'], item['upperTempBound'])
         currOutfit.append(newItem)
     
     user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
