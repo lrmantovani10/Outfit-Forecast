@@ -84,7 +84,7 @@ class User:
                 return False
         return False
 
-    # outfit must be a list of clothing items
+    # outfit must be a list of 4 clothing items
     def updateClothingHistory(self, outfit):
         if type(outfit) is list:
             if (len(outfit) != 4):
@@ -96,7 +96,8 @@ class User:
             return True   
         else:
             return False
-
+    
+    # outfit must be a list of 4 clothing items
     def setCurrOutfit(self, outfit):
         if type(outfit) is list:
             if (len(outfit) != 4):
