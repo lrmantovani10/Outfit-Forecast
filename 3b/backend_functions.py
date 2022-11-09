@@ -117,7 +117,10 @@ class User:
                 if type(x) is not Clothing:
                     return False
             self.currOutfit = outfit
-            userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfit.__dict__}})
+            outfitDict = []
+            for item in outfit:
+                outfitDict.append(item.__dict__)
+            userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfitDict}})
             return True   
         else:
             return False
@@ -289,7 +292,7 @@ class Clothing:
     # ------- setters -------
 
     # assume that the setters are called once by classifyNew and never again (below)
-    def setBounds(self, lower, upper):
+    def setBounds(self, lower, upper = 1000):
         if -20 <= lower <= 120 and -20 <= upper <= 120:
             self.lowerTempBound = lower
             self.upperTempBound = upper

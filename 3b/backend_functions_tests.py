@@ -156,22 +156,14 @@ class TestClothing(unittest.TestCase):
         self.assertFalse(newClothing.setObjectName("123456"), "objectName must have at least one letter")
         self.assertFalse(newClothing.setObjectName(0), "objectName must be type string")
 
-    def test_warmthRating(self):
-        newClothing = Clothing("t-shirt", "topInner",
-                               "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
-                               0)
-        self.assertEqual(newClothing.getWarmthRating(), 0)
-        self.assertTrue(newClothing.setWarmthRating(0))
-        self.assertFalse(newClothing.setWarmthRating("0"), "warmthRating must be type int")
-
     def test_classification(self):
         newClothing = Clothing("t-shirt", "topInner",
                                "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
                                0)
         self.assertTrue(newClothing.setClassification("bottom"))
         self.assertFalse(newClothing.setClassification("warm top"), "classification is not top/bottom/shoes")
-        self.assertTrue(newClothing.setClassification("top"))
-        self.assertEqual(newClothing.getClassification(), "top")
+        self.assertTrue(newClothing.setClassification("topInner"))
+        self.assertEqual(newClothing.getClassification(), "topInner")
 
     def test_bounds(self):
         newClothing = Clothing("t-shirt", "topInner",
