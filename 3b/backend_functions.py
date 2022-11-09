@@ -153,7 +153,7 @@ class User:
                 break
         if found == False:
             return "Could not classify the Image"
-        self.wardrobe.append(newItem)
+        self.updateWardrobe(newItem)
         return "Image Classified: " + lab
 
     def dailyRecommender(self, weatherInput):
