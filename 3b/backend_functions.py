@@ -133,7 +133,6 @@ class User:
     parse classification (preset categories and if it falls in one of those you take it)
     create clothing item
     call updateWardrobe on that clothing item
-
     '''
     def classifyNew(self, imgURL, lower, upper):
         topOuter = ['jacket', 'sweater', 'coat', 'hoodie']
