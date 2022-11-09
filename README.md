@@ -35,9 +35,9 @@ python3 backend_functions.py
 
 <ins>How to run the unit test cases:</ins>
 
-run make setup to download the requirements needed
+run 'make setup' to download the requirements needed
 
-run make tests to run tests
+run 'make tests' to run tests
 
 <ins>Implementation Description:</ins>
 
