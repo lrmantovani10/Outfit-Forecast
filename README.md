@@ -33,7 +33,7 @@ run 'make tests' to run tests
 
 <b>Leo and Daniel:</b> Clothing class getters and setters, User.dailyRecommender()
 
-<b>We also worked on setting up MongoDB communication within the classes and deploying a Flask API to Heroku, but that is not representative in our tests for this iteration</b>
+<b>We also worked on setting up MongoDB communication within the classes and deploying a Flask API to Heroku, but that is not representative in our tests for this iteration. We have endpoints that the front-end can use for internally creating a new User in db, adding a clothing object + classifying it for a User, and generating a daily outfit recommendation for a User (visit https://outfit-forecast.herokuapp.com/dailyRecommender/leo/60/65/63/rain for sample output)</b>
 
 <ins>Test changes for Milestone 3.b:</ins>
 
