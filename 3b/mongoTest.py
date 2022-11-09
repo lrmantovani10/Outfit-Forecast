@@ -7,11 +7,14 @@ db = client["User"]
 collection = db["Test"]
 
 username = 'leo'
-user = back.User(username, [], [], [], [])
+match = collection.find({'username': username})[0]
+# newClothing = back.Clothing("t-shirt", "topInner",
+#                                "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
+#                                'leo-0')
+collection.update_one({'username' : username},{'$set': {'location': [39.057293, -94.577599]}})
+#
 
-test = {"username": username, "wardobe" : [], "clothingHistory" : [], "currOutfit" : [], "location" : []}
 
-collection.insert_one(test)
 
 # answers = collection.find({'username' : 'leo'})
 #

@@ -84,10 +84,12 @@ def createUser(username):
     match = list(userCollection.find({'username': username}))
     if len(match) == 0:
         newUser = back.User("", [], [], [], [])
-        newUser.setUsername(username)
-        newInsert = {"username": username, "wardobe" : [], "clothingHistory" : [], "currOutfit" : [], "location" : []}
-        userCollection.insert_one(newInsert)
-        return "User created"
+        if (newUser.setUsername(username)):
+            newInsert = {"username": username, "wardobe" : [], "clothingHistory" : [], "currOutfit" : [], "location" : []}
+            userCollection.insert_one(newInsert)
+            return "User created"
+        else:
+            return "Username does not meet requirements"
     return "Username taken"
 
 if __name__ == '__main__':
