@@ -1,4 +1,5 @@
 import backend_functions as back
+import json
 
 link = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
 
@@ -33,13 +34,14 @@ temp_min = '65'
 temp_max = '60'
 feels_like = '63'
 atmosphere = 'cloudy'
+
 match = userCollection.find({'username': username})[0]
 
 wardrobeDict = match['wardrobe']
 wardrobe = []
 for item in wardrobeDict:
     newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
-                       item['lowerTempBound'], item['upperTempBound'])
+                            item['lowerTempBound'], item['upperTempBound'])
     wardrobe.append(newItem)
 
 clothingHistoryDict = match['clothingHistory']
@@ -47,20 +49,25 @@ clothingHistory = []
 for item in clothingHistoryDict:
     fit = []
     for i in range(4):
-        fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'],
-                            item[i]['lowerTempBound'], item[i]['upperTempBound']))
+        fit.append(
+            back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'],
+                          item[i]['lowerTempBound'], item[i]['upperTempBound']))
     clothingHistory.append(fit)
 
 currOutfitDict = match['currOutfit']
 currOutfit = []
 for item in currOutfitDict:
     newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
-                       item['lowerTempBound'], item['upperTempBound'])
+                            item['lowerTempBound'], item['upperTempBound'])
     currOutfit.append(newItem)
 
-print(wardrobe)
-print(clothingHistory)
-print(currOutfit)
+user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
+
+output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere])
+forJsonOutput = []
+for elem in output:
+    forJsonOutput.append(elem.__dict__)
+print(json.dumps(forJsonOutput))
 # user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
 #
 # output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere])
