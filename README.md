@@ -33,7 +33,7 @@ run 'make tests' to run tests
 
 <b>Leo and Daniel:</b> Clothing class getters and setters, User.dailyRecommender()
 
-<b>All:</b> Flask API setup
+<b>We also worked on setting up MongoDB communication within the classes and deploying a Flask API to Heroku, but that is not representative in our tests for this iteration</b>
 
 <ins>Test changes for Milestone 3.b:</ins>
 
