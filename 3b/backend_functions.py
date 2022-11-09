@@ -1,9 +1,8 @@
 import os
+import math
 from google.cloud import vision
 from google.cloud.vision_v1 import types
 import pymongo
-from bson.binary import Binary
-# from zoneinfo import ZoneInfo
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'inspiring-list-367201-258ee5841906.json'
 
@@ -17,11 +16,17 @@ userCollection = userDB["Test"]
 class User:
     def __init__(self, username, wardrobe, clothingHistory, currOutfit, location):
         # realized duplicate username check do not need to happen here, only on front-end route where the user is originally created
-        self.username = username
+        self.username = ""
+        self.setUsername(username)
+
         self.wardrobe = wardrobe
         self.clothingHistory = clothingHistory
-        self.currOutfit = currOutfit
-        self.location = location
+
+        self.currOutfit = []
+        self.setCurrOutfit(currOutfit)
+
+        self.location = []
+        self.setLocation(location)
 
     # ------- getters -------
     def getUsername(self):
@@ -48,7 +53,7 @@ class User:
     - must be alphanumeric (no whitespaces or special characters)
     '''
 
-    # user can't change their username, this is for internal use
+    # user can't change their username, this is for internal use only
     def setUsername(self, username):
         valid = False
         #isalnum checks that it doesn't have whitespaces or special characters
@@ -70,6 +75,7 @@ class User:
     def updateWardrobe(self, clothingItem):
         if type(clothingItem) is Clothing:
             self.wardrobe.append(clothingItem)
+            userCollection.update_one({'username': self.getUsername()}, {'$push': {'wardrobe': clothingItem.__dict__}})
             return True
         else:
             return False
@@ -79,12 +85,13 @@ class User:
         if len(locArr) == 2:
             if locArr[0]>= -90 and locArr[0] <= 90 and locArr[1] >= -180 and locArr[1] <= 180:
                 self.location = locArr
+                userCollection.update_one({'username' : self.getUsername()},{'$set': {'location': locArr}})
                 return True
             else:
                 return False
         return False
 
-    # outfit must be a list of clothing items
+    # outfit must be a list of 4 clothing items
     def updateClothingHistory(self, outfit):
         if type(outfit) is list:
             if (len(outfit) != 4):
@@ -93,10 +100,15 @@ class User:
                 if type(x) is not Clothing:
                     return False
             self.clothingHistory.append(outfit)
+            outfitDict = []
+            for item in outfit:
+                outfitDict.append(item.__dict__)
+            userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
             return True   
         else:
             return False
-
+    
+    # outfit must be a list of 4 clothing items
     def setCurrOutfit(self, outfit):
         if type(outfit) is list:
             if (len(outfit) != 4):
@@ -105,6 +117,7 @@ class User:
                 if type(x) is not Clothing:
                     return False
             self.currOutfit = outfit
+            userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfit.__dict__}})
             return True   
         else:
             return False
@@ -135,24 +148,24 @@ class User:
         for label in response_label.label_annotations:
             lab = label.description.lower()
             if lab in topOuter:
-                newItem = Clothing(lab, "topOuter", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())), lower, upper)
+                newItem = Clothing(lab, "topOuter", imgURL, self.getUsername() + "-" + str(len(self.getWardrobe())), lower, upper)
                 found = True
                 break
             elif lab in topInner: 
-                newItem = Clothing(lab, "topInner", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())), lower, upper)
+                newItem = Clothing(lab, "topInner", imgURL, self.getUsername() + "-" + str(len(self.getWardrobe())), lower, upper)
                 found = True
                 break
             elif lab in bottoms: 
-                newItem = Clothing(lab, "bottom", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())), lower, upper)
+                newItem = Clothing(lab, "bottom", imgURL, self.getUsername() + "-" + str(len(self.getWardrobe())), lower, upper)
                 found = True
                 break
             elif lab in shoes: 
-                newItem = Clothing(lab, "shoes", imgURL, self.getUsername() + "_" + str(len(self.getWardrobe())), lower, upper)
+                newItem = Clothing(lab, "shoes", imgURL, self.getUsername() + "-" + str(len(self.getWardrobe())), lower, upper)
                 found = True
                 break
         if found == False:
             return "Could not classify the Image"
-        self.wardrobe.append(newItem)
+        self.updateWardrobe(newItem)
         return "Image Classified: " + lab
 
     def dailyRecommender(self, weatherInput):
@@ -235,8 +248,8 @@ class User:
                 if range <= minShoesRange:
                     output[3] = item
                     minShoesRange = range
-        self.clothingHistory.append(output)
-        self.currOutfit = output
+        self.updateClothingHistory(output)
+        self.setCurrOutfit(output)
         return output
 
 class Clothing:
