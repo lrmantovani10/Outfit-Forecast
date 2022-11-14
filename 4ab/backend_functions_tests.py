@@ -142,6 +142,11 @@ class TestUser(unittest.TestCase):
         testItem3 = Clothing("t-shirt", "topInner", testImg3, "a-1", -20, 120)
         self.assertEqual(newUser.classifyNew(testImg3, -20, 120), "Image Classified: t-shirt")
         self.assertTrue(clothingItemEquals(newUser.getWardrobe()[1], testItem3))
+        testImg4 = "gs://first-bucket-example/pants.jpg"
+        testItem4 = Clothing("shorts", "bottom", testImg4, "a-2", -20, 120)
+        self.assertEqual(newUser.classifyNew(testImg4, -20, 120), "Image Classified: shorts")
+        self.assertTrue(clothingItemEquals(newUser.getWardrobe()[2], testItem4))
+
 
 
 class TestClothing(unittest.TestCase):

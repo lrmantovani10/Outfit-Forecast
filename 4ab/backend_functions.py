@@ -135,18 +135,23 @@ class User:
     call updateWardrobe on that clothing item
     '''
     def classifyNew(self, imgURL, lower, upper):
-        topOuter = ['jacket', 'sweater', 'coat', 'sweatshirt']
-        topInner = ['t-shirt', 'shirt', 'dress', 'sleeveless shirt']
+        topOuter = ['jacket', 'sweater', 'coat', 'sweatshirt', 'outerwear']
+        topInner = ['t-shirt', 'shirt', 'dress', 'sleeveless shirt', 'top']
         bottoms = ['jeans', 'shorts', 'pants', 'skirt']
         shoes = ['shoe', 'footwear', 'sneakers', 'boots', 'heels']
 
         client = vision.ImageAnnotatorClient()
         image = types.Image()
         image.source.image_uri = imgURL
+        classification_label = client.object_localization(image=image)
         response_label = client.label_detection(image=image)
         found = False
         if 'error' in response_label:
             return "API Error"
+        #if classification label is in topOuter, that is classification
+        #if label is in topOuter, that is object name, else object name is classification label
+
+        
         for label in response_label.label_annotations:
             lab = label.description.lower()
             if lab in topOuter:
