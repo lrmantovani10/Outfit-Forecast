@@ -124,7 +124,12 @@ class TestUser(unittest.TestCase):
 
     def test_rejected(self):
         newUser = User("a", [], [], [], [], [])
-
+        self.assertEqual(newUser.getRejected(), [])
+        test_img = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7"
+        newClothing = Clothing("t-shirt", "topInner", test_img, 0)
+        self.assertTrue(newUser.updateRejected(newClothing))
+        self.assertFalse(newUser.updateRejected("t-shirt"), "must update wardobe with clothing item")
+        self.assertEqual(newUser.getRejected(), [newClothing])
         
     # test that classifyNew correctly adds a clothing item to user's wardrobe
     # in reality, when user takes photo, ImageData class will call upload_image on that image which sends
