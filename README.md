@@ -38,6 +38,7 @@ run 'make tests' to run tests
 <ins>Work division:<ins>
 
 Gautam and Perene: improving classifyNew(), work with frontend to make sure endpoints are being called correctly, writing tests for classifyNew() and dailyRecommender()
+
 Leo and Daniel: 
 
 
