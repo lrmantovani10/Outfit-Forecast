@@ -124,12 +124,23 @@ class TestUser(unittest.TestCase):
 
     def test_rejected(self):
         newUser = User("a", [], [], [], [], [])
-        self.assertEqual(newUser.getRejected(), [])
-        test_img = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7"
-        newClothing = Clothing("t-shirt", "topInner", test_img, 0)
-        self.assertTrue(newUser.updateRejected(newClothing))
-        self.assertFalse(newUser.updateRejected("t-shirt"), "must update wardobe with clothing item")
-        self.assertEqual(newUser.getRejected(), [newClothing])
+        fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
+        fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2)]
+        fit3 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3),
+                Clothing("Sneakers", "shoes", "URL", 4)]
+        fit4 = [Clothing("Sweater", "topOuter", "URL", 0), Clothing("Dress Shirt", "topInner", "URL", 1),
+                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
+        self.assertTrue(newUser.updateRejected(fit1))
+        self.assertEqual(newUser.getRejected(), [fit1])
+        self.assertFalse(newUser.updateRejected(fit2), "There must be 4 clothing objects in the fit")
+        self.assertEqual(newUser.getRejected(), [fit1])
+        self.assertFalse(newUser.updateRejected(fit3), "There must be 4 clothing objects in the fit")
+        self.assertEqual(newUser.getRejected(), [fit1])
+        self.assertTrue(newUser.updateRejected(fit4))
+        self.assertEqual(newUser.getRejected(), [fit1, fit4])
         
     # test that classifyNew correctly adds a clothing item to user's wardrobe
     # in reality, when user takes photo, ImageData class will call upload_image on that image which sends
@@ -184,8 +195,12 @@ class TestUser(unittest.TestCase):
         outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "reject")
         self.assertEqual(outfit2, testOutfit2)
         self.assertEqual(newUser.getRejected(), [outfit])
-        self.assertEqual(newUser.getClothingHistory(), [outfit2])
-        self.assertEqual(newUser.getCurrOutfit, outfit2)
+        self.assertEqual(newUser.getClothingHistory(), [outfit2]) # testOutfit gets removed from clothingHistory, as it is rejected
+        self.assertEqual(newUser.getCurrOutfit, outfit2) # testOutfit gets removed from CurrOutfit, as it is rejected and replaced by outfit2
+
+
+
+
         
 
 class TestClothing(unittest.TestCase):
