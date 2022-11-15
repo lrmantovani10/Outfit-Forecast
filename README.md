@@ -15,9 +15,7 @@ For milestones 4a and 4b, our new code will be in the directory 4ab
 
 <ins>How to run code:</ins>
 
-cd 4ab
-
-python3 backend_functions.py
+python3 4ab/backend_functions.py
 
 <ins>How to run the unit test cases:</ins>
 
@@ -37,7 +35,7 @@ run 'make tests' to run tests
 
 <ins>Work division:<ins>
 
-Gautam and Perene: improving classifyNew(), work with frontend to make sure endpoints are being called correctly, writing tests for classifyNew() and dailyRecommender()
+Gautam and Perene: improving classifyNew(), work with frontend to make sure endpoints are being called correctly, writing tests for classifyNew(), dailyRecommender(), and getter and setter for new rejected list
 
 Leo and Daniel: 
 

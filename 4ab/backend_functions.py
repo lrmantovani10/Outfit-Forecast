@@ -14,7 +14,7 @@ userCollection = userDB["Test"]
 
 # only user setters need to access and modify db
 class User:
-    def __init__(self, username, wardrobe, clothingHistory, currOutfit, location):
+    def __init__(self, username, wardrobe, clothingHistory, currOutfit, rejected, location):
         # realized duplicate username check do not need to happen here, only on front-end route where the user is originally created
         self.username = ""
         self.setUsername(username)
@@ -24,6 +24,8 @@ class User:
 
         self.currOutfit = []
         self.setCurrOutfit(currOutfit)
+
+        self.rejected = rejected
 
         self.location = []
         self.setLocation(location)
@@ -42,7 +44,10 @@ class User:
         return self.currOutfit   
 
     def getClothingHistory(self):
-        return self.clothingHistory    
+        return self.clothingHistory   
+
+    def getRejected(self):
+        return self.rejected     
 
     # -------  setters  -------
     ''' 
@@ -125,6 +130,20 @@ class User:
         else:
             return False
 
+    def updateRejected(self, outfit):
+        if type(outfit) is list:
+            if (len(outfit) != 4):
+                return False
+            for x in outfit:
+                if type(x) is not Clothing:
+                    return False
+            self.rejected.append(outfit)
+            outfitDict = []
+            for item in outfit:
+                outfitDict.append(item.__dict__)
+            return True   
+        else:
+            return False
 
     # ------- ------- ------- ------- -------
     
