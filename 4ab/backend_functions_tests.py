@@ -177,11 +177,17 @@ class TestUser(unittest.TestCase):
         testItem2 = Clothing("jeans", "bottom", testImg2, "a-1", -20, 120)
         testItem3 = Clothing("t-shirt", "topInner", testImg3, "a-2", -20, 120)
         testItem4 = Clothing("outerwear", "topOuter", testImg4, "a-3", -20, 120)
+        testOutfit = [testItem4, testItem3, testItem2, testItem1]
+        
+        self.assertNotEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new"), testOutfit, \
+         "There are no clothes in the wardrobe")
+        self.assertEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new"), None)
+
         newUser.updateWardrobe(testItem1)
         newUser.updateWardrobe(testItem2)
         newUser.updateWardrobe(testItem3)
         newUser.updateWardrobe(testItem4)
-        testOutfit = [testItem4, testItem3, testItem2, testItem1]
+
         outfit = newUser.dailyRecommender([30, 40, 35, 'rain'], "new")
         self.assertEqual(newUser.getRejected(), [])
         self.assertEqual(outfit, testOutfit)
@@ -193,15 +199,17 @@ class TestUser(unittest.TestCase):
         newUser.updateWardrobe(testItem5)
         testOutfit2 = [testItem5, testItem3, testItem2, testItem1]
         outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "reject")
+        self.assertEqual(newUser.getRejected(), [outfit]) # previous recommended outfit stored in currOutfit is rejected
+        self.assertNotEqual(outfit2, testOutfit, "Rejected Outfits cannot be recommended again")
         self.assertEqual(outfit2, testOutfit2)
-        self.assertEqual(newUser.getRejected(), [outfit])
         self.assertEqual(newUser.getClothingHistory(), [outfit2]) # testOutfit gets removed from clothingHistory, as it is rejected
         self.assertEqual(newUser.getCurrOutfit, outfit2) # testOutfit gets removed from CurrOutfit, as it is rejected and replaced by outfit2
 
-
-
-
-        
+        outfit3 = newUser.dailyRecommender([30, 40, 35, 'rain'], "new")
+        self.assertEqual(newUser.getRejected(), []) # Rejected list should be wiped
+        self.assertEqual(outfit3, testOutfit) # testOutfit can be recommended again, because it has been removed from rejected
+        self.assertEqual(newUser.getClothingHistory(), [outfit2, outfit3])
+        self.assertEqual(newUser.getCurrOutfit, outfit3)
 
 class TestClothing(unittest.TestCase):
 
