@@ -7,11 +7,15 @@ Current class diagram
 
 <ins>Test suite used:</ins> unittest (https://docs.python.org/3/library/unittest.html)
 
+<ins>Directory Structure:<ins>
+
+For milestones 4a and 4b, our new code will be in the directory 4ab
+
 <ins>How to compile:</ins> No need to compile!
 
 <ins>How to run code:</ins>
 
-cd 3b
+cd 4ab
 
 python3 backend_functions.py
 
@@ -21,36 +25,21 @@ run 'make setup' to download the requirements needed
 
 run 'make tests' to run tests
 
-<ins>Implementation Description:</ins>
+<ins>Plan for 2nd iteration (backend only):<ins>
 
-- Getters and Setters for Clothing and User classes
-- User.classifyNew() which takes in image URL, lower bound, and upper bound (sent from front end) and calls Google Vision API on the image. Gets the classification from Google Vision API, creates a new clothing object accordingly, adds it to the user's wardrobe
-- User.dailyRecommender(), which takes in a weather input as defined by front-end API usage (format was described to us on a call). The function looks through the User's wardrobe and runs an elementary algorithm to pick 4 Clothing objects as the outfit for the day depending on temperature and conditions/atmosphere (e.g. rain, snow, clouds, wind). This chosen outfit is appended to User.clothingHistory and set as User.currOutfit
+- Implement prevention of outfit repetition --> in dailyRecommender() it will look at thhe 3 most recent outfits in clothingHistory list and make sure not to output them
+- Allowing user to accept/decline an outfit --> we are creating a rejected outfits list as part of the User class, if the user has rejected an outfit, dailyRecommender will rerun and add that outfit to the rejected list and create a new outfit to output
+- Improve classifyNew() --> improve the way classifyNew() classifies images, including using object detection in addition to label detection. Object detection will be used for classification (it seems to have less margin of error in classifying correctly), and label detection is more specific so it will be used for the objectName
 
-<ins>Work Distribution:</ins>
+<ins>What we are not implementing and why:<ins>
 
-<b>Gautam and Perene:</b> User class getters and setters, User.classifyNew()
+"Stop making suggestions that user has denied for certain weather" --> Originally our plan was if a user rejects an outfit on a certain weather, in the future when that weather comes up again, we would weigh that outfit less (the probability of recommending that outfit is lower than other outfits). We decided not to implement this because if a user declines an outfit, it could be because of multiple reasons not due to the weather (they didn't feel like wearing that outfit that day, etc).
 
-<b>Leo and Daniel:</b> Clothing class getters and setters, User.dailyRecommender()
+<ins>Work division:<ins>
 
-<b>We also worked on setting up MongoDB communication within the classes and deploying a Flask API to Heroku, but that is not representative in our tests for this iteration. We have endpoints that the front-end can use for internally creating a new User in db, adding a clothing object + classifying it for a User, and generating a daily outfit recommendation for a User (visit https://outfit-forecast.herokuapp.com/dailyRecommender/leo/60/65/63/rain for sample output)</b>
+Gautam and Perene: improving classifyNew(), work with frontend to make sure endpoints are being called correctly, writing tests for classifyNew() and dailyRecommender()
+Leo and Daniel: 
 
-<ins>Test changes for Milestone 3.b:</ins>
 
-In backend_functions_tests.py...
 
-- Removed all tests for EnvironmentalData class because that is being handled by the front-end
-- Moved dailyRecommender function back to User class because we believe that it is certainly part of the core user functionality (even though we were suggested to move it elsewhere)
-- test_username for User class has some changes due to changing parameters of what is allowed.
 
-  Old parameters: length at most 32, cannot be empty, alphanmeric but must have at least one letter and one digit, no special characters, first char cannot be a digit
-  
-  New parameters: length at most 32, cannot be empty, alphanumeric but must have at least one letter, no special characters, no whitespaces, first char cannot be a digit
-  
-- TestClothing class had constructor changed to also take in classification as an input
-- test_classification for Clothing class had tests simplified to only allow topInner/topOuter/bottom/shoes as possible classifications
-- Removed test_preferences for User class because we determined that only Clothing objects should have preferences (also got rid of prefPair class in favor of just having a lower and upper bound on the temperature at which you will wear a piece of clothing in). Replaced with test_bounds under TestClothing.
-- Removed warmth rating from Clothing objects entirely, so got rid of test_warmthRating under TestClothing.
-- test_classifyNew changed to add another image URL of a t-shirt. The test checked if the t-shirt was correctly classified and if a new clothing objet was created and added to the user's wardrobe
-
-<ins>Peer Evaluation:</ins> N/A
