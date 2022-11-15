@@ -1,6 +1,7 @@
 from flask import Flask
 import backend_functions as back
 import json
+from urllib import unquote
 
 link = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
 
@@ -73,11 +74,11 @@ def classifyNew(username, URL, lower, upper):
     for item in currOutfitDict:
         newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerTempBound'], item['upperTempBound'])
         currOutfit.append(newItem)
-    
-    user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
 
+    user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
+    decodedURL = unquote(URL).decode('utf8')
     # Returns a status string (like below)
-    return user.classifyNew(URL, lower, upper)
+    return user.classifyNew(decodedURL, lower, upper)
 
 @app.route('/createUser/<username>')
 def createUser(username):
