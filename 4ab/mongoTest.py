@@ -1,5 +1,7 @@
 import backend_functions as back
-import json
+import requests
+from urllib.parse import unquote
+from urllib.parse import quote_plus
 
 link = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
 
@@ -35,39 +37,6 @@ temp_max = '60'
 feels_like = '63'
 atmosphere = 'cloudy'
 
-match = userCollection.find({'username': username})[0]
-
-wardrobeDict = match['wardrobe']
-wardrobe = []
-for item in wardrobeDict:
-    newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
-                            item['lowerTempBound'], item['upperTempBound'])
-    wardrobe.append(newItem)
-
-clothingHistoryDict = match['clothingHistory']
-clothingHistory = []
-for item in clothingHistoryDict:
-    fit = []
-    for i in range(4):
-        fit.append(
-            back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'],
-                          item[i]['lowerTempBound'], item[i]['upperTempBound']))
-    clothingHistory.append(fit)
-
-currOutfitDict = match['currOutfit']
-currOutfit = []
-for item in currOutfitDict:
-    newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
-                            item['lowerTempBound'], item['upperTempBound'])
-    currOutfit.append(newItem)
-
-user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
-
-output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere])
-forJsonOutput = []
-for elem in output:
-    forJsonOutput.append(elem.__dict__)
-print(json.dumps(forJsonOutput))
 # user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
 #
 # output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere])
@@ -75,3 +44,10 @@ print(json.dumps(forJsonOutput))
 # for elem in output:
 #     forJsonOutput.append(elem.__dict__)
 # return json.dumps(forJsonOutput)
+
+match = userCollection.find({'username': 'forclothingaddition'})[0]
+wardrobeLength = len(match['wardrobe'])
+url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7'
+quoted = quote_plus(url)
+requests.get('https://outfit-forecast.herokuapp.com/classifyNew/forclothingaddition/' + quoted + '/60/65')
+

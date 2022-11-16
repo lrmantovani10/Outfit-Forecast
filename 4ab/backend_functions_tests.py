@@ -1,5 +1,8 @@
 import unittest
+import requests
 from backend_functions import *
+from urllib.parse import quote_plus
+from datetime import datetime
 
 
 # Tries to connect and insert to a mongodb database based on
@@ -7,7 +10,7 @@ from backend_functions import *
 def connection_link_tester(link):
     client = pymongo.MongoClient(link)
     try:
-        db = client["Clothing"]
+        db = client["UnitTests"]
         collection = db["Test"]
         test = {"unittest": "ok"}
         collection.insert_one(test)
@@ -19,8 +22,8 @@ def clothingItemEquals(obj1, obj2):
     if obj1.getObjectName() == obj2.getObjectName() \
     and obj1.getClassification() == obj2.getClassification() \
     and obj1.getImgURL() == obj2.getImgURL() \
-    and obj1.getClothingID() == obj2.getClothingID()\
-    and obj1.getLowerBound() == obj2.getLowerBound()\
+    and obj1.getClothingID() == obj2.getClothingID() \
+    and obj1.getLowerBound() == obj2.getLowerBound() \
     and obj1.getUpperBound() == obj2.getUpperBound():
         return True
     else:
@@ -32,22 +35,93 @@ class TestConnection(unittest.TestCase):
     # To fix install these certificates that MongoDB uses (https://stackoverflow.com/a/69407602), as the default Windows ones are expired in terms of what MongoDB requires
     # If this test fails that is why ^
     def test_connection(self):
-        realLink = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
+        realMongoLink = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
         fakeLink = "yo yo yo"
+
+        client = pymongo.MongoClient(realMongoLink)
+        db = client["UnitTests"]
+        collection = db["Test"]
+
+        currCount = collection.count_documents({"unittest": "ok"})
+
         self.assertFalse(connection_link_tester(fakeLink))
 
         # This will have added a valid entry to the db
-        self.assertTrue(connection_link_tester(realLink))
+        self.assertTrue(connection_link_tester(realMongoLink))
 
-        client = pymongo.MongoClient(realLink)
-        db = client["Clothing"]
-        collection = db["Test"]
 
-        # This document can only be made by connection_link_tester above, so it should exist
-        self.assertTrue(collection.count_documents({"unittest": "ok"}) > 0)
+        # Tester should have added a document
+        self.assertTrue(collection.count_documents({"unittest": "ok"}) == currCount + 1)
 
         # This fake document should not exist
         self.assertFalse(collection.count_documents({'doesNotExist': 'Fake'}) > 0)
+
+class TestFlask(unittest.TestCase):
+
+    def test_recommender_endpoint(self):
+        recommenderNewTest = requests.get('https://outfit-forecast.herokuapp.com/dailyRecommender/forunittests/60/65/63/nothing/new').json()
+        recommenderNewExpected = [{'objectName': 'sweater', 'classification': 'topOuter', 'clothingID': 'leo-0',
+                                   'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater.jpg?alt=media&token=ded9d625-062e-4e61-bbdc-a3988104fb8b',
+                                   'lowerTempBound': -10, 'upperTempBound': 110},
+                                  {'objectName': 't-shirt', 'classification': 'topInner', 'clothingID': 'leo-1',
+                                   'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7',
+                                   'lowerTempBound': -20, 'upperTempBound': 120},
+                                  {'objectName': 'sweatpants', 'classification': 'bottom', 'clothingID': 'leo-2',
+                                   'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweatpants.jpg?alt=media&token=9c54025f-94f1-4759-9894-6df682867241',
+                                   'lowerTempBound': -20, 'upperTempBound': 120},
+                                  {'objectName': 'shoes', 'classification': 'shoes', 'clothingID': 'leo-3',
+                                   'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shoes.jpg?alt=media&token=a1f187f2-ca97-41b2-a39f-8291f34849bd',
+                                   'lowerTempBound': -20, 'upperTempBound': 120}]
+        self.assertEqual(recommenderNewTest, recommenderNewExpected)
+
+        recommenderRejectTest = requests.get('https://outfit-forecast.herokuapp.com/dailyRecommender/forunittests/60/65/63/nothing/reject').json()
+        recommenderRejectExpected = [{'objectName': 'hoodie', 'classification': 'topOuter', 'clothingID': 'leo-4',
+                                   'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7',
+                                   'lowerTempBound': -20, 'upperTempBound': 120},
+                                  {'objectName': 't-shirt', 'classification': 'topInner', 'clothingID': 'leo-1',
+                                   'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7',
+                                   'lowerTempBound': -20, 'upperTempBound': 120},
+                                  {'objectName': 'sweatpants', 'classification': 'bottom', 'clothingID': 'leo-2',
+                                   'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweatpants.jpg?alt=media&token=9c54025f-94f1-4759-9894-6df682867241',
+                                   'lowerTempBound': -20, 'upperTempBound': 120},
+                                  {'objectName': 'shoes', 'classification': 'shoes', 'clothingID': 'leo-3',
+                                   'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shoes.jpg?alt=media&token=a1f187f2-ca97-41b2-a39f-8291f34849bd',
+                                   'lowerTempBound': -20, 'upperTempBound': 120}]
+        self.assertEqual(recommenderRejectTest, recommenderRejectExpected)
+
+    def test_classification_endpoint(self):
+        realMongoLink = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
+        client = pymongo.MongoClient(realMongoLink)
+        db = client["User"]
+        userCollection = db["Test"]
+
+        match = userCollection.find({'username': 'forclothingaddition'})[0]
+        wardrobeLength = len(match['wardrobe'])
+        url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7'
+        quoted = quote_plus(url)
+        requests.get('https://outfit-forecast.herokuapp.com/classifyNew/forclothingaddition/' + quoted + '/60/65')
+
+        match = userCollection.find({'username': 'forclothingaddition'})[0]
+        wardrobeLength2 = len(match['wardrobe'])
+
+        self.assertEqual(wardrobeLength + 1, wardrobeLength2)
+
+    def test_user_creation_endpoint(self):
+        now = datetime.now()
+        timestamp = now.strftime("%m/%d/%Y, %H:%M:%S").replace(", ", "-").replace("/", "-").replace(":", "-")
+        username = "testuser-" + timestamp
+        requests.get('https://outfit-forecast.herokuapp.com/createUser/' + username)
+
+        realMongoLink = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
+        client = pymongo.MongoClient(realMongoLink)
+        db = client["User"]
+        userCollection = db["Test"]
+
+        try:
+            match = userCollection.find({'username': username})
+            self.assertEqual(True, True)
+        except:
+            self.assertEqual(False, True)
 
 
 class TestUser(unittest.TestCase):
@@ -179,8 +253,7 @@ class TestUser(unittest.TestCase):
         testItem4 = Clothing("outerwear", "topOuter", testImg4, "a-3", -20, 120)
         testOutfit = [testItem4, testItem3, testItem2, testItem1]
         
-        self.assertNotEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new"), testOutfit, \
-         "There are no clothes in the wardrobe")
+        self.assertNotEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new"), testOutfit, "There are no clothes in the wardrobe")
         self.assertEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new"), None)
 
         newUser.updateWardrobe(testItem1)
