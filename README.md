@@ -37,7 +37,10 @@ run 'make tests' to run tests
 
 Gautam and Perene: improving classifyNew(), work with frontend to make sure endpoints are being called correctly, writing tests for classifyNew(), dailyRecommender(), and getter and setter for new rejected list
 
-Leo and Daniel: 
+Leo and Daniel: modifying Flask endpoints to implement new outfit rejection feature (and writing Flask tests), restructuring MongoDB database out of testing phase, improving dailyRecommender() by...
+- implementing clothing history to prevent same outfit from being repeatedly recommended
+- implementing recent outfit rejection to make sure we don't output those outfits again
+- internally selecting 2 'best outfits' with no overlap and then outputting combinations of them as rejections come through
 
 
 
