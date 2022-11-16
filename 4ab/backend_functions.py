@@ -170,7 +170,8 @@ class User:
         #if classification label is in topOuter, that is classification
         #if label is in topOuter, that is object name, else object name is classification label
 
-        
+        newItem = ""
+        lab = ""
         for label in response_label.label_annotations:
             lab = label.description.lower()
             if lab in topOuter:
@@ -194,7 +195,7 @@ class User:
         self.updateWardrobe(newItem)
         return "Image Classified: " + lab
 
-    def dailyRecommender(self, weatherInput):
+    def dailyRecommender(self, weatherInput, callStatus):
         # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
         temp_min = weatherInput[0]
         temp_max = weatherInput[1]
