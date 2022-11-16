@@ -25,8 +25,8 @@ run 'make tests' to run tests
 
 <ins>Plan for 2nd iteration (backend only):<ins>
 
-- Implement prevention of outfit repetition --> in dailyRecommender() it will look at thhe 3 most recent outfits in clothingHistory list and make sure not to output them
-- Allowing user to accept/decline an outfit --> we are creating a rejected outfits list as part of the User class, if the user has rejected an outfit, dailyRecommender will rerun and add that outfit to the rejected list and create a new outfit to output (rejected list will be reset every time dailyRecommender() is called for the first time / not after a rejected outfit)
+- Implement prevention of outfit repetition --> dailyRecommender() will look at a few recent outfits in clothingHistory list and make sure not to output them
+- Allowing user to accept/decline an outfit --> we are creating a rejected outfits list as part of the User class, if the user has rejected an outfit, dailyRecommender will rerun and add that outfit to the rejected list and create a new outfit to output (rejected list will be reset every time dailyRecommender() is called for the first time in a day / not after a rejected outfit [this will be managed by the front-end depending on how they call the Flask API])
 - Improve classifyNew() --> improve the way classifyNew() classifies images, including using object detection in addition to label detection. Object detection will be used for classification (it seems to have less margin of error in classifying correctly), and label detection is more specific so it will be used for the objectName
 
 <ins>What we are not implementing and why:<ins>
