@@ -156,7 +156,7 @@ class User:
     def classifyNew(self, imgURL, lower, upper):
         topOuter = ['jacket', 'sweater', 'coat', 'sweatshirt', 'outerwear']
         topInner = ['t-shirt', 'shirt', 'dress', 'sleeveless shirt', 'top']
-        bottoms = ['jeans', 'shorts', 'pants', 'skirt']
+        bottom = ['jeans', 'shorts', 'pants', 'skirt']
         shoes = ['shoe', 'footwear', 'sneakers', 'boots', 'heels']
 
         client = vision.ImageAnnotatorClient()
@@ -164,36 +164,42 @@ class User:
         image.source.image_uri = imgURL
         classification_label = client.object_localization(image=image)
         response_label = client.label_detection(image=image)
-        found = False
-        if 'error' in response_label:
+        
+        if 'error' in response_label or 'error' in classification_label:
             return "API Error"
-        #if classification label is in topOuter, that is classification
-        #if label is in topOuter, that is object name, else object name is classification label
+            
+        found = False
+        temp = ""
+        name = ""
+        classification = ""
+        username = self.getUsername() + "-" + str(len(self.getWardrobe()))
 
-        newItem = ""
-        lab = ""
-        for label in response_label.label_annotations:
-            lab = label.description.lower()
-            if lab in topOuter:
-                newItem = Clothing(lab, "topOuter", imgURL, self.getUsername() + "-" + str(len(self.getWardrobe())), lower, upper)
+        for label in classification_label.localized_object_annotations:
+            temp = label.name.lower()
+            if temp in topOuter:
+                classification = "topOuter"
                 found = True
                 break
-            elif lab in topInner: 
-                newItem = Clothing(lab, "topInner", imgURL, self.getUsername() + "-" + str(len(self.getWardrobe())), lower, upper)
+            if temp in topInner:
+                classification = "topInner"
                 found = True
                 break
-            elif lab in bottoms: 
-                newItem = Clothing(lab, "bottom", imgURL, self.getUsername() + "-" + str(len(self.getWardrobe())), lower, upper)
+            if temp in bottom:
+                classification = "bottom"
                 found = True
                 break
-            elif lab in shoes: 
-                newItem = Clothing(lab, "shoes", imgURL, self.getUsername() + "-" + str(len(self.getWardrobe())), lower, upper)
+            if temp in shoes:
+                classification = "shoes"
                 found = True
                 break
+        
         if found == False:
             return "Could not classify the Image"
+
+        name = temp
+        newItem = Clothing(name, classification, imgURL, username, lower, upper)
         self.updateWardrobe(newItem)
-        return "Image Classified: " + lab
+        return "Image Classified: " + name
 
     def dailyRecommender(self, weatherInput, callStatus):
         # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]

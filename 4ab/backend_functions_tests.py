@@ -233,8 +233,8 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.classifyNew(testImg2, -20, 120), "API Error")
         self.assertTrue(clothingItemEquals(updatedWardrobe[0], testItem))
         testImg3 = "gs://first-bucket-example/t-shirt.jpg"
-        testItem3 = Clothing("t-shirt", "topInner", testImg3, "a-1", -20, 120)
-        self.assertEqual(newUser.classifyNew(testImg3, -20, 120), "Image Classified: t-shirt")
+        testItem3 = Clothing("top", "topInner", testImg3, "a-1", -20, 120)
+        self.assertEqual(newUser.classifyNew(testImg3, -20, 120), "Image Classified: top")
         self.assertTrue(clothingItemEquals(newUser.getWardrobe()[1], testItem3))
         testImg4 = "gs://first-bucket-example/pants.jpg"
         testItem4 = Clothing("shorts", "bottom", testImg4, "a-2", -20, 120)
