@@ -43,6 +43,7 @@ Leo and Daniel: modifying Flask endpoints to implement new outfit rejection feat
 - internally selecting 2 'best outfits' with no overlap and then outputting combinations of them as rejections come through
 
 <ins>Milestone 4B Implementation Comments:<ins>
+
 classifyNew function has been improved:
 - Decided not to use label_detection at all and instead we are relying solely on  object detection, as this is far more accurate and reliable
 - With more testing of images with Google Vision's label_detection feature, we found that it classified clothes very inaccurately
