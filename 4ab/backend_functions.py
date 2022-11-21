@@ -141,6 +141,7 @@ class User:
             outfitDict = []
             for item in outfit:
                 outfitDict.append(item.__dict__)
+            userCollection.update_one({'username': self.getUsername()}, {'$push': {'rejected': outfitDict}})
             return True   
         else:
             return False
@@ -167,7 +168,7 @@ class User:
         
         if 'error' in response_label or 'error' in classification_label:
             return "API Error"
-            
+
         found = False
         temp = ""
         name = ""
