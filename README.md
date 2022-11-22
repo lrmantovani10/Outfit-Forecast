@@ -3,7 +3,7 @@
 An app to generate outfit predictions based on one's wardrobe and current weather.
 
 Current class diagram
-![Class Diagram](class-diagrams/updatedClassDiagram5.png)
+![Class Diagram](class-diagrams/updatedClassDiagram6.png)
 
 <ins>Test suite used:</ins> unittest (https://docs.python.org/3/library/unittest.html)
 
