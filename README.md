@@ -26,7 +26,7 @@ run 'make tests' to run tests
 <ins>Plan for 2nd iteration (backend only):<ins>
 
 - Implement prevention of outfit repetition --> dailyRecommender() will look at a few recent outfits in clothingHistory list and make sure not to output them
-- Allowing user to accept/decline an outfit --> we are creating a rejected outfits list as part of the User class, if the user has rejected an outfit, dailyRecommender will rerun and add that outfit to the rejected list and create a new outfit to output (rejected list will be reset every time dailyRecommender() is called for the first time in a day / not after a rejected outfit [this will be managed by the front-end depending on how they call the Flask API])
+- Allowing user to accept/decline an outfit --> if the user has rejected an outfit, dailyRecommender will rerun and create a new outfit to output (rejections will be reset every time dailyRecommender() is called for the first time in a day / not after a rejected outfit [this will be managed by the front-end depending on how they call the Flask API])
 - Improve classifyNew() --> improve the way classifyNew() classifies images, including using object detection in addition to label detection. Object detection will be used for classification (it seems to have less margin of error in classifying correctly), and label detection is more specific so it will be used for the objectName
 
 <ins>What we are not implementing and why:<ins>
@@ -38,8 +38,8 @@ run 'make tests' to run tests
 Gautam and Perene: improving classifyNew(), work with frontend to make sure endpoints are being called correctly, writing tests for classifyNew(), dailyRecommender(), and getter and setter for new rejected list
 
 Leo and Daniel: modifying Flask endpoints to implement new outfit rejection feature (and writing Flask tests), restructuring MongoDB database out of testing phase, improving dailyRecommender() by...
-- implementing clothing history to prevent same outfit from being repeatedly recommended
-- implementing recent outfit rejection to make sure we don't output those outfits again
+- implementing clothing history to prevent yesterday's accepted outfit from being recommended
+- implementing ability to reject outfits and re-call function to get another outfit
 - internally selecting 2 'best outfits' with no overlap and then outputting combinations of them as rejections come through
 
 <ins>Milestone 4B Implementation Comments:<ins>
@@ -48,6 +48,8 @@ classifyNew function has been improved:
 - Decided not to use label_detection at all and instead we are relying solely on  object detection, as this is far more accurate and reliable
 - With more testing of images with Google Vision's label_detection feature, we found that it classified clothes very inaccurately
 - Object Detetction feature, although producing slighly broad/vague labels, is far more accurate, and so is used to help with determining classification and name of clothing object
+  
+dailyRecommender function has been improved as stated in the specs above
 
 
 
