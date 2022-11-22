@@ -147,25 +147,16 @@ class User:
         return True
 
     def setOutfitQueue(self, newQueue, db = True):
-        if type(newQueue) is list:
-            for x in newQueue:
-                if len(x) != 4:
-                    return False
-                for y in x:
-                    if type(y) is not Clothing:
-                        return False
-            self.outfitQueue = newQueue
-            if db:
-                newQueueDict = []
-                for outfit in newQueue:
-                    outfitDict = []
-                    for item in outfit:
-                        outfitDict.append(item.__dict__)
-                    newQueueDict.append(outfitDict)
-                userCollection.update_one({'username': self.getUsername()}, {'$set': {'outfitQueue': newQueueDict}})
-            return True
-        else:
-            return False
+        self.outfitQueue = newQueue
+        if db:
+            newQueueDict = []
+            for outfit in newQueue:
+                outfitDict = []
+                for item in outfit:
+                    outfitDict.append(item.__dict__)
+                newQueueDict.append(outfitDict)
+            userCollection.update_one({'username': self.getUsername()}, {'$set': {'outfitQueue': newQueueDict}})
+        return True
 
     def popClothingHistory(self, db = True):
         self.clothingHistory.pop(-1)
@@ -399,8 +390,19 @@ class User:
                                     newOutput[k] = output2[k]
                                     outfitQueue.append(newOutput)
 
+            allowedNones = []
+            for idx, piece in enumerate(output):
+                if piece == None:
+                    allowedNones.append(idx)
+
+            allowed = True
             if output2 != [None, None, None, None]:
-                outfitQueue.append(output2)
+                for idx, piece in enumerate(output2):
+                    if piece == None:
+                        if idx not in allowedNones:
+                            allowed = False
+                if allowed:
+                    outfitQueue.append(output2)
 
             # print(outfitQueue)
             # for fit in outfitQueue:
@@ -420,6 +422,7 @@ class User:
             self.setCurrOutfit(outfitQueue[0], db)
 
             self.setQueueIndex(0, db)
+            print(outfitQueue)
             self.setOutfitQueue(outfitQueue, db)
             return outfitQueue[0] # still returns first outfit, but sets up multiple
         else:

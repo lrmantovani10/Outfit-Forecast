@@ -53,14 +53,16 @@ userCollection = db["Test"]
 
 import api
 import json
-username = "leo"
+username = "forunittests"
 user = api.createPerson(username)
-if user == "Invalid username":
-    print("Invalid username")
 
 output = user.dailyRecommender([60,65,63,"rain"], "new", False)
 forJsonOutput = []
 for elem in output:
     forJsonOutput.append(elem.__dict__)
-    #print(json.dumps(forJsonOutput))
+    #print(elem.__dict__)
+
+print("---")
+for elem in user.outfitQueue:
+    print(elem)
 
