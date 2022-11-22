@@ -12,47 +12,55 @@ userCollection = userDB["Test"]
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
+def createPerson(username):
+    try:
+        match = userCollection.find({'username': username})[0]
+    except:
+        return "Invalid username"
+
+    wardrobeDict = match['wardrobe']
+    wardrobe = []
+    for item in wardrobeDict:
+        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
+                                item['lowerTempBound'], item['upperTempBound'])
+        wardrobe.append(newItem)
+
+    clothingHistoryDict = match['clothingHistory']
+    clothingHistory = []
+    for item in clothingHistoryDict:
+        fit = []
+        for i in range(4):
+            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
+                                     item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
+        clothingHistory.append(fit)
+
+    currOutfitDict = match['currOutfit']
+    currOutfit = []
+    for item in currOutfitDict:
+        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
+                                item['lowerTempBound'], item['upperTempBound'])
+        currOutfit.append(newItem)
+
+    queueDict = match['outfitQueue']
+    outfitQueue = []
+    for item in queueDict:
+        fit = []
+        for i in range(4):
+            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
+                                     item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
+        outfitQueue.append(fit)
+
+    return back.User(match['username'], wardrobe, clothingHistory, currOutfit, outfitQueue, match['queueIndex'], match['location'])
+
 @app.route('/')
 def index():
     return "<h1> Deployed to Heroku</h1>"
 
 @app.route('/dailyRecommender/<username>/<temp_min>/<temp_max>/<feels_like>/<atmosphere>/<callStatus>')
 def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere, callStatus):
-    try:
-        match = userCollection.find({'username': username})[0]
-    except:
+    user = createPerson(username)
+    if user == "Invalid username":
         return "Invalid username"
-    
-    wardrobeDict = match['wardrobe']
-    wardrobe = []
-    for item in wardrobeDict:
-        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerTempBound'], item['upperTempBound'])
-        wardrobe.append(newItem)
-        
-    clothingHistoryDict = match['clothingHistory']
-    clothingHistory = []
-    for item in clothingHistoryDict:
-        fit = []
-        for i in range(4):
-            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
-        clothingHistory.append(fit)
-        
-    currOutfitDict = match['currOutfit']
-    currOutfit = []
-    for item in currOutfitDict:
-        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerTempBound'], item['upperTempBound'])
-        currOutfit.append(newItem)
-
-    rejectedDict = match['rejected']
-    rejected = []
-    for item in rejectedDict:
-        fit = []
-        for i in range(4):
-            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
-                                     item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
-        rejected.append(fit)
-    
-    user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, rejected, match['location'])
 
     output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere], callStatus)
     forJsonOutput = []
@@ -62,38 +70,10 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere, callS
 
 @app.route('/classifyNew/<username>/<URL>/<lower>/<upper>')
 def classifyNew(username, URL, lower, upper):
-    match = userCollection.find({'username': username})[0]
-    
-    wardrobeDict = match['wardrobe']
-    wardrobe = []
-    for item in wardrobeDict:
-        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerTempBound'], item['upperTempBound'])
-        wardrobe.append(newItem)
-        
-    clothingHistoryDict = match['clothingHistory']
-    clothingHistory = []
-    for item in clothingHistoryDict:
-        fit = []
-        for i in range(4):
-            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'], item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
-        clothingHistory.append(fit)
-        
-    currOutfitDict = match['currOutfit']
-    currOutfit = []
-    for item in currOutfitDict:
-        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'], item['lowerTempBound'], item['upperTempBound'])
-        currOutfit.append(newItem)
+    user = createPerson(username)
+    if user == "Invalid username":
+        return "Invalid username"
 
-    rejectedDict = match['rejected']
-    rejected = []
-    for item in rejectedDict:
-        fit = []
-        for i in range(4):
-            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
-                                     item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
-        rejected.append(fit)
-
-    user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, rejected, match['location'])
     decodedURL = unquote_plus(URL)
     # Returns a status string (like below)
     return user.classifyNew(decodedURL, lower, upper)
@@ -102,9 +82,9 @@ def classifyNew(username, URL, lower, upper):
 def createUser(username):
     match = list(userCollection.find({'username': username}))
     if len(match) == 0:
-        newUser = back.User("", [], [], [], [], [])
+        newUser = back.User("", [], [], [], [], 0, [])
         if (newUser.setUsername(username)):
-            newInsert = {"username": username, "wardobe" : [], "clothingHistory" : [], "currOutfit" : [], "rejected" : [], "location" : []}
+            newInsert = {"username": username, "wardobe" : [], "clothingHistory" : [], "currOutfit" : [], "outfitQueue" : [], "queueIndex" : 0, "location" : []}
             userCollection.insert_one(newInsert)
             return "User created"
         else:

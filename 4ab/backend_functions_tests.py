@@ -127,7 +127,7 @@ class TestFlask(unittest.TestCase):
 class TestUser(unittest.TestCase):
 
     def test_username(self):
-        newUser = User("a", [], [], [], [], [])
+        newUser = User("a", [], [], [], [], 0, [])
         self.assertFalse(newUser.setUsername("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm"),
                          "Username is more than 32 characters")
         self.assertFalse(newUser.setUsername(""), "Username is empty")
@@ -141,28 +141,28 @@ class TestUser(unittest.TestCase):
 
     # Location API returns latitude, longitude pair
     def test_location(self):
-        newUser = User("a", [], [], [], [], [])
-        self.assertFalse(newUser.setLocation([-95, 70]), "Latitude must be between -90 and 90 degrees")
-        self.assertFalse(newUser.setLocation([95, 70]), "Latitude must be between -90 and 90 degrees")
-        self.assertFalse(newUser.setLocation([50, -182]), "Longitude must be between -180 and 180 degrees")
-        self.assertFalse(newUser.setLocation([50, 182]), "Longitude must be between -180 and 180 degrees")
-        self.assertFalse(newUser.setLocation([-182]), "Location must have 2 values")
-        self.assertFalse(newUser.setLocation([]), "Location must have 2 values")
-        self.assertTrue(newUser.setLocation([50, 65]))
+        newUser = User("a", [], [], [], [], 0, [])
+        self.assertFalse(newUser.setLocation([-95, 70], False), "Latitude must be between -90 and 90 degrees")
+        self.assertFalse(newUser.setLocation([95, 70], False), "Latitude must be between -90 and 90 degrees")
+        self.assertFalse(newUser.setLocation([50, -182], False), "Longitude must be between -180 and 180 degrees")
+        self.assertFalse(newUser.setLocation([50, 182], False), "Longitude must be between -180 and 180 degrees")
+        self.assertFalse(newUser.setLocation([-182], False), "Location must have 2 values")
+        self.assertFalse(newUser.setLocation([], False), "Location must have 2 values")
+        self.assertTrue(newUser.setLocation([50, 65], False))
         self.assertTrue(newUser.getLocation(), [50, 65])
 
     # no set_wardrobe because classifyNew() will handle appending items to wardrobe
     def test_wardrobe(self):
-        newUser = User("a", [], [], [], [], [])
+        newUser = User("a", [], [], [], [], 0, [])
         self.assertEqual(newUser.getWardrobe(), [])
         test_img = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7"
         newClothing = Clothing("t-shirt", "topInner", test_img, 0)
-        self.assertTrue(newUser.updateWardrobe(newClothing))
-        self.assertFalse(newUser.updateWardrobe("t-shirt"), "must update wardobe with clothing item")
+        self.assertTrue(newUser.updateWardrobe(newClothing, False))
+        self.assertFalse(newUser.updateWardrobe("t-shirt", False), "must update wardobe with clothing item")
         self.assertEqual(newUser.getWardrobe(), [newClothing])
 
     def test_currOutfit(self):
-        newUser = User("a", [], [], [], [], [])
+        newUser = User("a", [], [], [], [], 0, [])
         fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
                 Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
         fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
@@ -170,14 +170,14 @@ class TestUser(unittest.TestCase):
         fit3 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
                 Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3),
                 Clothing("Sneakers", "shoes", "URL", 4)]
-        self.assertTrue(newUser.setCurrOutfit(fit1))
+        self.assertTrue(newUser.setCurrOutfit(fit1, False))
         self.assertEqual(newUser.getCurrOutfit(), fit1)
-        self.assertFalse(newUser.setCurrOutfit(fit2), "There must be 4 clothing objects")
-        self.assertFalse(newUser.setCurrOutfit(fit3), "There must be 4 clothing objects")
-        self.assertFalse(newUser.setCurrOutfit(["jacket", "shirt", "jeans", "shoes"]), "These are not clothing objects")
+        self.assertFalse(newUser.setCurrOutfit(fit2, False), "There must be 4 clothing objects")
+        self.assertFalse(newUser.setCurrOutfit(fit3, False), "There must be 4 clothing objects")
+        self.assertFalse(newUser.setCurrOutfit(["jacket", "shirt", "jeans", "shoes"], False), "These are not clothing objects")
 
     def test_clothingHistory(self):
-        newUser = User("a", [], [], [], [], [])
+        newUser = User("a", [], [], [], [], 0, [])
         fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
                 Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
         fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
@@ -187,62 +187,64 @@ class TestUser(unittest.TestCase):
                 Clothing("Sneakers", "shoes", "URL", 4)]
         fit4 = [Clothing("Sweater", "topOuter", "URL", 0), Clothing("Dress Shirt", "topInner", "URL", 1),
                 Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
-        self.assertTrue(newUser.updateClothingHistory(fit1))
+        self.assertTrue(newUser.updateClothingHistory(fit1, False))
         self.assertEqual(newUser.getClothingHistory(), [fit1])
-        self.assertFalse(newUser.updateClothingHistory(fit2), "There must be 4 clothing objects in the fit")
+        self.assertFalse(newUser.updateClothingHistory(fit2, False), "There must be 4 clothing objects in the fit")
         self.assertEqual(newUser.getClothingHistory(), [fit1])
-        self.assertFalse(newUser.updateClothingHistory(fit3), "There must be 4 clothing objects in the fit")
+        self.assertFalse(newUser.updateClothingHistory(fit3, False), "There must be 4 clothing objects in the fit")
         self.assertEqual(newUser.getClothingHistory(), [fit1])
-        self.assertTrue(newUser.updateClothingHistory(fit4))
+        self.assertTrue(newUser.updateClothingHistory(fit4, False))
         self.assertEqual(newUser.getClothingHistory(), [fit1, fit4])
 
-    def test_rejected(self):
-        newUser = User("a", [], [], [], [], [])
-        fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
-        fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2)]
-        fit3 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3),
-                Clothing("Sneakers", "shoes", "URL", 4)]
-        fit4 = [Clothing("Sweater", "topOuter", "URL", 0), Clothing("Dress Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
-        self.assertTrue(newUser.updateRejected(fit1))
-        self.assertEqual(newUser.getRejected(), [fit1])
-        self.assertFalse(newUser.updateRejected(fit2), "There must be 4 clothing objects in the fit")
-        self.assertEqual(newUser.getRejected(), [fit1])
-        self.assertFalse(newUser.updateRejected(fit3), "There must be 4 clothing objects in the fit")
-        self.assertEqual(newUser.getRejected(), [fit1])
-        self.assertTrue(newUser.updateRejected(fit4))
-        self.assertEqual(newUser.getRejected(), [fit1, fit4])
+    # NO LONGER USING REJECT LIST
+
+    # def test_rejected(self):
+    #     newUser = User("a", [], [], [], [], [])
+    #     fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+    #             Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
+    #     fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+    #             Clothing("Jeans", "bottom", "URL", 2)]
+    #     fit3 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
+    #             Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3),
+    #             Clothing("Sneakers", "shoes", "URL", 4)]
+    #     fit4 = [Clothing("Sweater", "topOuter", "URL", 0), Clothing("Dress Shirt", "topInner", "URL", 1),
+    #             Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
+    #     self.assertTrue(newUser.updateRejected(fit1))
+    #     self.assertEqual(newUser.getRejected(), [fit1])
+    #     self.assertFalse(newUser.updateRejected(fit2), "There must be 4 clothing objects in the fit")
+    #     self.assertEqual(newUser.getRejected(), [fit1])
+    #     self.assertFalse(newUser.updateRejected(fit3), "There must be 4 clothing objects in the fit")
+    #     self.assertEqual(newUser.getRejected(), [fit1])
+    #     self.assertTrue(newUser.updateRejected(fit4))
+    #     self.assertEqual(newUser.getRejected(), [fit1, fit4])
         
     # test that classifyNew correctly adds a clothing item to user's wardrobe
     # in reality, when user takes photo, ImageData class will call upload_image on that image which sends
     # it to the bucket, then gets the firebase URL and calls classifyNew with that URL
     def test_classifyNew(self):
-        newUser = User("a", [], [], [], [], [])
+        newUser = User("a", [], [], [], [], 0, [])
         self.assertEqual(newUser.getWardrobe(), [])
         # google vision api takes imageURL from firebase
         testImg = "gs://first-bucket-example/shoes.jpg"
         testItem = Clothing("footwear", "shoes", testImg, "a-0", -20, 120)
-        self.assertEqual(newUser.classifyNew(testImg, -20, 120), "Image Classified: footwear")
+        self.assertEqual(newUser.classifyNew(testImg, -20, 120, False), "Image Classified: footwear")
         updatedWardrobe = newUser.getWardrobe()
         # print(updatedWardrobe.__dict__)
         self.assertTrue(clothingItemEquals(updatedWardrobe[0], testItem))
         testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater"  # faulty URL, which doesn't work
-        self.assertEqual(newUser.classifyNew(testImg2, -20, 120), "API Error")
+        self.assertEqual(newUser.classifyNew(testImg2, -20, 120, False), "API Error")
         self.assertTrue(clothingItemEquals(updatedWardrobe[0], testItem))
         testImg3 = "gs://first-bucket-example/t-shirt.jpg"
         testItem3 = Clothing("top", "topInner", testImg3, "a-1", -20, 120)
-        self.assertEqual(newUser.classifyNew(testImg3, -20, 120), "Image Classified: top")
+        self.assertEqual(newUser.classifyNew(testImg3, -20, 120, False), "Image Classified: top")
         self.assertTrue(clothingItemEquals(newUser.getWardrobe()[1], testItem3))
         testImg4 = "gs://first-bucket-example/pants.jpg"
         testItem4 = Clothing("shorts", "bottom", testImg4, "a-2", -20, 120)
-        self.assertEqual(newUser.classifyNew(testImg4, -20, 120), "Image Classified: shorts")
+        self.assertEqual(newUser.classifyNew(testImg4, -20, 120, False), "Image Classified: shorts")
         self.assertTrue(clothingItemEquals(newUser.getWardrobe()[2], testItem4))
 
     def test_dailyRecommender(self):
-        newUser = User("a", [], [], [], [], [])
+        newUser = User("a", [], [], [], [], 0, [])
         testImg1 = "gs://first-bucket-example/shoes.jpg"
         testImg2 = "gs://first-bucket-example/jeans.jpeg"
         testImg3 = "gs://first-bucket-example/t-shirt.jpg"
@@ -253,34 +255,31 @@ class TestUser(unittest.TestCase):
         testItem4 = Clothing("outerwear", "topOuter", testImg4, "a-3", -20, 120)
         testOutfit = [testItem4, testItem3, testItem2, testItem1]
         
-        self.assertNotEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new"), testOutfit, "There are no clothes in the wardrobe")
-        self.assertEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new"), None)
+        self.assertNotEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False), testOutfit, "There are no clothes in the wardrobe")
+        self.assertEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False), None)
 
-        newUser.updateWardrobe(testItem1)
-        newUser.updateWardrobe(testItem2)
-        newUser.updateWardrobe(testItem3)
-        newUser.updateWardrobe(testItem4)
+        newUser.updateWardrobe(testItem1, False)
+        newUser.updateWardrobe(testItem2, False)
+        newUser.updateWardrobe(testItem3, False)
+        newUser.updateWardrobe(testItem4, False)
 
-        outfit = newUser.dailyRecommender([30, 40, 35, 'rain'], "new")
-        self.assertEqual(newUser.getRejected(), [])
+        outfit = newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False)
         self.assertEqual(outfit, testOutfit)
         self.assertEqual(newUser.getClothingHistory(), [testOutfit])
         self.assertEqual(newUser.getCurrOutfit(), testOutfit)
 
         testImg5 = "gs://first-bucket-example/IMG_0077.jpg"
         testItem5 = Clothing("sweatshirt", "topOuter", testImg5, "a-4", -20, 120)
-        newUser.updateWardrobe(testItem5)
+        newUser.updateWardrobe(testItem5, False)
         testOutfit2 = [testItem5, testItem3, testItem2, testItem1]
-        outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "reject")
-        self.assertEqual(newUser.getRejected(), [outfit]) # previous recommended outfit stored in currOutfit is rejected
-        self.assertNotEqual(outfit2, testOutfit, "Rejected Outfits cannot be recommended again")
+        outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "reject", False)
+        self.assertNotEqual(outfit2, testOutfit, "Rejected Outfit will not get re-recommended ")
         self.assertEqual(outfit2, testOutfit2)
         self.assertEqual(newUser.getClothingHistory(), [outfit2]) # testOutfit gets removed from clothingHistory, as it is rejected
         self.assertEqual(newUser.getCurrOutfit, outfit2) # testOutfit gets removed from CurrOutfit, as it is rejected and replaced by outfit2
 
-        outfit3 = newUser.dailyRecommender([30, 40, 35, 'rain'], "new")
-        self.assertEqual(newUser.getRejected(), []) # Rejected list should be wiped
-        self.assertEqual(outfit3, testOutfit) # testOutfit can be recommended again, because it has been removed from rejected
+        outfit3 = newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False)
+        self.assertEqual(outfit3, testOutfit) # testOutfit can be recommended again on new call
         self.assertEqual(newUser.getClothingHistory(), [outfit2, outfit3])
         self.assertEqual(newUser.getCurrOutfit, outfit3)
 

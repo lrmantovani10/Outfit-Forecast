@@ -14,7 +14,7 @@ userCollection = userDB["Test"]
 
 # only user setters need to access and modify db
 class User:
-    def __init__(self, username, wardrobe, clothingHistory, currOutfit, rejected, location):
+    def __init__(self, username, wardrobe, clothingHistory, currOutfit, outfitQueue, queueIndex, location):
         # realized duplicate username check do not need to happen here, only on front-end route where the user is originally created
         self.username = ""
         self.setUsername(username)
@@ -25,7 +25,8 @@ class User:
         self.currOutfit = []
         self.setCurrOutfit(currOutfit)
 
-        self.rejected = rejected
+        self.outfitQueue = outfitQueue
+        self.queueIndex = queueIndex
 
         self.location = []
         self.setLocation(location)
@@ -46,8 +47,11 @@ class User:
     def getClothingHistory(self):
         return self.clothingHistory   
 
-    def getRejected(self):
-        return self.rejected 
+    def getOutfitQueue(self):
+        return self.outfitQueue
+
+    def getQueueIndex(self):
+        return self.queueIndex
 
     # -------  setters  -------
     ''' 
@@ -77,27 +81,29 @@ class User:
             return False
 
     # must be of type clothing
-    def updateWardrobe(self, clothingItem):
+    def updateWardrobe(self, clothingItem, db = True):
         if type(clothingItem) is Clothing:
             self.wardrobe.append(clothingItem)
-            userCollection.update_one({'username': self.getUsername()}, {'$push': {'wardrobe': clothingItem.__dict__}})
+            if db:
+                userCollection.update_one({'username': self.getUsername()}, {'$push': {'wardrobe': clothingItem.__dict__}})
             return True
         else:
             return False
 
     # must be of type [latitude, longitude]
-    def setLocation(self, locArr):
+    def setLocation(self, locArr, db = True):
         if len(locArr) == 2:
             if locArr[0]>= -90 and locArr[0] <= 90 and locArr[1] >= -180 and locArr[1] <= 180:
                 self.location = locArr
-                userCollection.update_one({'username' : self.getUsername()},{'$set': {'location': locArr}})
+                if db:
+                    userCollection.update_one({'username' : self.getUsername()},{'$set': {'location': locArr}})
                 return True
             else:
                 return False
         return False
 
     # outfit must be a list of 4 clothing items
-    def updateClothingHistory(self, outfit):
+    def updateClothingHistory(self, outfit, db = True):
         if type(outfit) is list:
             if (len(outfit) != 4):
                 return False
@@ -105,16 +111,17 @@ class User:
                 if type(x) is not Clothing:
                     return False
             self.clothingHistory.append(outfit)
-            outfitDict = []
-            for item in outfit:
-                outfitDict.append(item.__dict__)
-            userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
+            if db:
+                outfitDict = []
+                for item in outfit:
+                    outfitDict.append(item.__dict__)
+                userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
             return True   
         else:
             return False
     
     # outfit must be a list of 4 clothing items
-    def setCurrOutfit(self, outfit):
+    def setCurrOutfit(self, outfit, db = True):
         if type(outfit) is list:
             if (len(outfit) != 4):
                 return False
@@ -122,29 +129,50 @@ class User:
                 if type(x) is not Clothing:
                     return False
             self.currOutfit = outfit
-            outfitDict = []
-            for item in outfit:
-                outfitDict.append(item.__dict__)
-            userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfitDict}})
+            if db:
+                outfitDict = []
+                for item in outfit:
+                    outfitDict.append(item.__dict__)
+                userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfitDict}})
             return True   
         else:
             return False
 
-    def updateRejected(self, outfit):
-        if type(outfit) is list:
-            if (len(outfit) != 4):
-                return False
-            for x in outfit:
-                if type(x) is not Clothing:
+    def setQueueIndex(self, index, db = True):
+        if type(index) is not int:
+            return False
+        self.queueIndex = index
+        if db:
+            userCollection.update_one({'username': self.getUsername()}, {'$set': {'queueIndex': index}})
+        return True
+
+    def setOutfitQueue(self, newQueue, db = True):
+        if type(newQueue) is list:
+            for x in newQueue:
+                if len(x) != 4:
                     return False
-            self.rejected.append(outfit)
-            outfitDict = []
-            for item in outfit:
-                outfitDict.append(item.__dict__)
-            userCollection.update_one({'username': self.getUsername()}, {'$push': {'rejected': outfitDict}})
-            return True   
+                for y in x:
+                    if type(y) is not Clothing:
+                        return False
+            self.outfitQueue = newQueue
+            if db:
+                newQueueDict = []
+                for outfit in newQueue:
+                    outfitDict = []
+                    for item in outfit:
+                        outfitDict.append(item.__dict__)
+                    newQueueDict.append(outfitDict)
+                userCollection.update_one({'username': self.getUsername()}, {'$set': {'outfitQueue': newQueueDict}})
+            return True
         else:
             return False
+
+    def popClothingHistory(self, db = True):
+        self.clothingHistory.pop(-1)
+        if db:
+            userCollection.update_one({'username': self.getUsername()}, {'$pop': {'clothingHistory': 1}})
+        return True
+
 
     # ------- ------- ------- ------- -------
     
@@ -154,7 +182,7 @@ class User:
     create clothing item
     call updateWardrobe on that clothing item
     '''
-    def classifyNew(self, imgURL, lower, upper):
+    def classifyNew(self, imgURL, lower, upper, db = True):
         topOuter = ['jacket', 'sweater', 'coat', 'sweatshirt', 'outerwear']
         topInner = ['t-shirt', 'shirt', 'dress', 'sleeveless shirt', 'top']
         bottom = ['jeans', 'shorts', 'pants', 'skirt']
@@ -199,92 +227,178 @@ class User:
 
         name = temp
         newItem = Clothing(name, classification, imgURL, username, lower, upper)
-        self.updateWardrobe(newItem)
+        self.updateWardrobe(newItem, db)
         return "Image Classified: " + name
 
-    def dailyRecommender(self, weatherInput, callStatus):
-        # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
-        temp_min = weatherInput[0]
-        temp_max = weatherInput[1]
-        feels_like = weatherInput[2]
-        atmosphere = weatherInput[3]
+    def dailyRecommender(self, weatherInput, callStatus, db = True):
+        if callStatus == "reject":
+            # no need to run a new prediction
+            queueIndex = self.getQueueIndex()
+            outfitQueue = self.getOutfitQueue()
 
-        minTopOuterRange = math.inf
-        minTopInnerRange = math.inf
-        minBottomRange = math.inf
-        minShoesRange = math.inf
+            self.popClothingHistory(db)
+            if queueIndex == len(outfitQueue) - 1:
+                queueIndex = 0
+            else:
+                queueIndex += 1
 
-        topOuterConditionsMet = False
-        topInnerConditionsMet = False
-        bottomConditionsMet = False
-        shoesConditionsMet = False
+            self.updateClothingHistory(outfitQueue[queueIndex], db)
+            self.setCurrOutfit(outfitQueue[queueIndex], db)
+            self.setQueueIndex(queueIndex, db)
+            return outfitQueue[queueIndex]
 
-        output = [None, None, None, None]
+        if callStatus == "new":
+            # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
+            temp_min = weatherInput[0]
+            temp_max = weatherInput[1]
+            feels_like = weatherInput[2]
+            atmosphere = weatherInput[3]
 
-        # CURRENT ALGORITHM: CHOOSES CLOTHING ITEM WITH TIGHTEST (SMALLEST) SURVEY TEMPERATURE RANGE
-        # WHERE THE DAILY MAX AND MIN TEMPERATURES FALL INTO THAT RANGE
+            minTopOuterRange = math.inf
+            minTopOuterRange2 = math.inf
 
-        # accounts for some atmosphere conditions
-        # will never recommend outer top for feels_like >= 75
+            minTopInnerRange = math.inf
+            minTopInnerRange2 = math.inf
 
-        for item in self.getWardrobe():
-            lower = item.getLowerBound()
-            upper = item.getUpperBound()
-            if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                continue
-            range = upper - lower
-            if item.classification == "topOuter":
-                if feels_like >= 75:
+            minBottomRange = math.inf
+            minBottomRange2 = math.inf
+
+            minShoesRange = math.inf
+            minShoesRange2 = math.inf
+
+            topOuterConditionsMet = False
+            topInnerConditionsMet = False
+            bottomConditionsMet = False
+            shoesConditionsMet = False
+
+            output = [None, None, None, None]
+            output2 = [None, None, None, None]
+
+            # CURRENT ALGORITHM: CHOOSES CLOTHING ITEM WITH TIGHTEST (SMALLEST) SURVEY TEMPERATURE RANGE
+            # WHERE THE DAILY MAX AND MIN TEMPERATURES FALL INTO THAT RANGE
+
+            # accounts for some atmosphere conditions
+            # will never recommend outer top for feels_like >= 75
+
+            for item in self.getWardrobe():
+                lower = item.getLowerBound()
+                upper = item.getUpperBound()
+                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
                     continue
-                if 'rain' in atmosphere or 'snow' in atmosphere:
-                    if 'jacket' not in item.getObjectName() and 'coat' not in item.getObjectName() and 'wind' not in item.getObjectName() and 'parka' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
-                        if topOuterConditionsMet:
-                            continue
-                    else:
-                        if not topOuterConditionsMet:
-                            topOuterConditionsMet = True
-                            output[0] = item
-                            minTopOuterRange = range
+                rangeF = upper - lower
+                if item.classification == "topOuter":
+                    if feels_like >= 75:
+                        continue
+                    if 'rain' in atmosphere or 'snow' in atmosphere:
+                        if 'jacket' not in item.getObjectName() and 'coat' not in item.getObjectName() and 'wind' not in item.getObjectName() and 'parka' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
+                            if topOuterConditionsMet:
+                                continue
+                        else:
+                            if not topOuterConditionsMet:
+                                topOuterConditionsMet = True
+                                output[0] = item
+                                minTopOuterRange = rangeF
 
-                if range <= minTopOuterRange:
-                    output[0] = item
-                    minTopOuterRange = range
-            if item.classification == "topInner":
-                # no topInnerConditions yet, might add short/long sleeve in the future
-                if range <= minTopInnerRange:
-                    output[1] = item
-                    minTopInnerRange = range
-            if item.classification == "bottom":
-                if 'rain' in atmosphere or 'snow' in atmosphere:
-                    if 'short' in item.getObjectName():
-                        if bottomConditionsMet:
-                            continue
-                    else:
-                        if not bottomConditionsMet:
-                            bottomConditionsMet = True
-                            output[2] = item
-                            minBottomRange = range
+                    if rangeF < minTopOuterRange:
+                        output2[0] = output[0]
+                        output[0] = item
+                        minTopOuterRange2 = minTopOuterRange
+                        minTopOuterRange = rangeF
+                    elif rangeF < minTopOuterRange2:
+                        output2[0] = item
+                        minTopOuterRange2 = rangeF
+                if item.classification == "topInner":
+                    # no topInnerConditions yet, might add short/long sleeve in the future
+                    if rangeF < minTopInnerRange:
+                        output2[1] = output[1]
+                        output[1] = item
+                        minTopInnerRange2 = minTopInnerRange
+                        minTopInnerRange = rangeF
+                    elif rangeF < minTopInnerRange2:
+                        output2[1] = item
+                        minTopInnerRange2 = rangeF
+                if item.classification == "bottom":
+                    if 'rain' in atmosphere or 'snow' in atmosphere:
+                        if 'short' in item.getObjectName():
+                            if bottomConditionsMet:
+                                continue
+                        else:
+                            if not bottomConditionsMet:
+                                bottomConditionsMet = True
+                                output[2] = item
+                                minBottomRange = rangeF
 
-                if range <= minBottomRange:
-                    output[2] = item
-                    minBottomRange = range
-            if item.classification == "shoes":
-                if 'rain' in atmosphere or 'snow' in atmosphere:
-                    if 'boot' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
-                        if shoesConditionsMet:
-                            continue
-                    else:
-                        if not shoesConditionsMet:
-                            shoesConditionsMet = True
-                            output[3] = item
-                            minShoesRange = range
+                    if rangeF < minBottomRange:
+                        output2[2] = output[2]
+                        output[2] = item
+                        minBottomRange2 = minBottomRange
+                        minBottomRange = rangeF
+                    elif rangeF < minBottomRange2:
+                        output2[2] = item
+                        minBottomRange2 = rangeF
 
-                if range <= minShoesRange:
-                    output[3] = item
-                    minShoesRange = range
-        self.updateClothingHistory(output)
-        self.setCurrOutfit(output)
-        return output
+                if item.classification == "shoes":
+                    if 'rain' in atmosphere or 'snow' in atmosphere:
+                        if 'boot' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
+                            if shoesConditionsMet:
+                                continue
+                        else:
+                            if not shoesConditionsMet:
+                                shoesConditionsMet = True
+                                output[3] = item
+                                minShoesRange = rangeF
+
+                    if rangeF < minShoesRange:
+                        output2[3] = output[3]
+                        output[3] = item
+                        minShoesRange2 = minShoesRange
+                        minShoesRange = rangeF
+                    elif rangeF < minShoesRange2:
+                        output2[3] = item
+                        minShoesRange2 = rangeF
+
+            # Adds combinations of outfits 1 and 2 to the queue
+            queueIndex = 0
+            outfitQueue = []
+
+            outfitQueue.append(output)
+
+            for i in range(4):
+                if output2[i] != None:
+                    outfitQueue.append(output[:i] + output2[i] + output[i+1:])
+
+            for i in range(4):
+                if output2[i] != None:
+                    for j in range(i+1,4):
+                        if output2[j] != None:
+                            newOutput = output
+                            newOutput[i] = output2[i]
+                            newOutput[j] = output2[j]
+                            outfitQueue.append(newOutput)
+
+            for i in range(4):
+                newOutput = output2
+                newOutput[i] = output[i]
+                if None not in newOutput[:i] and None not in newOutput[i+1:]:
+                    outfitQueue.append(newOutput)
+
+            outfitQueue.append(output2)
+            outfitQueue = list(set(outfitQueue))
+
+            # don't suggest yesterday's chosen outfit
+            if len(outfitQueue) != 1:
+                if self.getClothingHistory()[-1] in outfitQueue:
+                    outfitQueue.remove(self.getClothingHistory()[-1])
+
+            # Sets/returns first outfit and updates history with it
+            self.updateClothingHistory(outfitQueue[0], db)
+            self.setCurrOutfit(outfitQueue[0], db)
+
+            self.setQueueIndex(queueIndex, db)
+            self.setOutfitQueue(outfitQueue, db)
+            return outfitQueue[0] # still returns first outfit, but sets up multiple
+        else:
+            return "Invalid call status (must be new/reject)"
 
 class Clothing:
     def __init__(self, name, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):
