@@ -283,8 +283,11 @@ class User:
             for item in self.getWardrobe():
                 lower = item.getLowerBound()
                 upper = item.getUpperBound()
+
+                # this might end up not giving you a fit!!!
                 if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
                     continue
+
                 rangeF = upper - lower
                 if item.classification == "topOuter":
                     if feels_like >= 75:
@@ -297,7 +300,10 @@ class User:
                             if not topOuterConditionsMet:
                                 topOuterConditionsMet = True
                                 output[0] = item
+                                output2[0] = None
                                 minTopOuterRange = rangeF
+                                minTopInnerRange2 = math.inf
+                                continue
 
                     if rangeF < minTopOuterRange:
                         output2[0] = output[0]
@@ -326,7 +332,10 @@ class User:
                             if not bottomConditionsMet:
                                 bottomConditionsMet = True
                                 output[2] = item
+                                output2[2] = None
                                 minBottomRange = rangeF
+                                minBottomRange2 = math.inf
+                                continue
 
                     if rangeF < minBottomRange:
                         output2[2] = output[2]
@@ -346,7 +355,10 @@ class User:
                             if not shoesConditionsMet:
                                 shoesConditionsMet = True
                                 output[3] = item
+                                output2[3] = None
                                 minShoesRange = rangeF
+                                minShoesRange2 = math.inf
+                                continue
 
                     if rangeF < minShoesRange:
                         output2[3] = output[3]
@@ -364,7 +376,7 @@ class User:
 
             for i in range(4):
                 if output2[i] != None:
-                    outfitQueue.append(output[:i] + output2[i] + output[i+1:])
+                    outfitQueue.append(output[:i] + [output2[i]] + output[i+1:])
 
             for i in range(4):
                 if output2[i] != None:
@@ -376,13 +388,27 @@ class User:
                             outfitQueue.append(newOutput)
 
             for i in range(4):
-                newOutput = output2
-                newOutput[i] = output[i]
-                if None not in newOutput[:i] and None not in newOutput[i+1:]:
-                    outfitQueue.append(newOutput)
+                if output2[i] != None:
+                    for j in range(i + 1, 4):
+                        if output2[j] != None:
+                            for k in range(j + 1, 4):
+                                if output2[k] != None:
+                                    newOutput = output
+                                    newOutput[i] = output2[i]
+                                    newOutput[j] = output2[j]
+                                    newOutput[k] = output2[k]
+                                    outfitQueue.append(newOutput)
 
-            outfitQueue.append(output2)
-            outfitQueue = list(set(outfitQueue))
+            if output2 != [None, None, None, None]:
+                outfitQueue.append(output2)
+
+            # print(outfitQueue)
+            # for fit in outfitQueue:
+            #     print("FIT:")
+            #     for i in range(4):
+            #         if fit[i] is None:
+            #             print()
+            #         print(fit[i].__dict__)
 
             # don't suggest yesterday's chosen outfit
             if len(outfitQueue) != 1:
@@ -413,6 +439,32 @@ class Clothing:
         self.lowerTempBound = -20
         self.upperTempBound = 120
         self.setBounds(lowerBound, upperBound)
+
+    # def __eq__(self, other):
+    #     if self is None and other is None:
+    #         return True
+    #     if self is None:
+    #         return False
+    #     if other is None:
+    #         return False
+    #     if self.getObjectName() == other.getObjectName() \
+    #             and self.getClassification() == other.getClassification() \
+    #             and self.getImgURL() == other.getImgURL() \
+    #             and self.getClothingID() == other.getClothingID() \
+    #             and self.getLowerBound() == other.getLowerBound() \
+    #             and self.getUpperBound() == other.getUpperBound():
+    #         return True
+    #     else:
+    #         return False
+    #
+    # def __ne__(self, other):
+    #     if self is None and other is None:
+    #         return False
+    #     if self is None:
+    #         return True
+    #     if other is None:
+    #         return True
+    #     return not self.__eq__(other)
 
     # ------- getters -------
     def getObjectName(self):

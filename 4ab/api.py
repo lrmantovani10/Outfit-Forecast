@@ -12,6 +12,7 @@ userCollection = userDB["Test"]
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
+# helper
 def createPerson(username):
     try:
         match = userCollection.find({'username': username})[0]

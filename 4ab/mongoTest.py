@@ -31,11 +31,11 @@ userCollection = db["Test"]
 # Removes last element from array
 # userCollection.update_one({'username': 'leo'}, {'$pop': {'clothingHistory': -1}})
 
-username = 'leo'
-temp_min = '65'
-temp_max = '60'
-feels_like = '63'
-atmosphere = 'cloudy'
+# username = 'leo'
+# temp_min = '65'
+# temp_max = '60'
+# feels_like = '63'
+# atmosphere = 'cloudy'
 
 # user = back.User(match['username'], wardrobe, clothingHistory, currOutfit, match['location'])
 #
@@ -45,9 +45,22 @@ atmosphere = 'cloudy'
 #     forJsonOutput.append(elem.__dict__)
 # return json.dumps(forJsonOutput)
 
-match = userCollection.find({'username': 'forclothingaddition'})[0]
-wardrobeLength = len(match['wardrobe'])
-url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7'
-quoted = quote_plus(url)
-requests.get('https://outfit-forecast.herokuapp.com/classifyNew/forclothingaddition/' + quoted + '/60/65')
+# match = userCollection.find({'username': 'forclothingaddition'})[0]
+# wardrobeLength = len(match['wardrobe'])
+# url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7'
+# quoted = quote_plus(url)
+# requests.get('https://outfit-forecast.herokuapp.com/classifyNew/forclothingaddition/' + quoted + '/60/65')
+
+import api
+import json
+username = "leo"
+user = api.createPerson(username)
+if user == "Invalid username":
+    print("Invalid username")
+
+output = user.dailyRecommender([60,65,63,"rain"], "new", False)
+forJsonOutput = []
+for elem in output:
+    forJsonOutput.append(elem.__dict__)
+    #print(json.dumps(forJsonOutput))
 
