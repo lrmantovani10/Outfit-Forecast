@@ -60,9 +60,5 @@ output = user.dailyRecommender([60,65,63,"rain"], "new", False)
 forJsonOutput = []
 for elem in output:
     forJsonOutput.append(elem.__dict__)
-    #print(elem.__dict__)
-
-print("---")
-for elem in user.outfitQueue:
-    print(elem)
+    print(elem.__dict__)
 
