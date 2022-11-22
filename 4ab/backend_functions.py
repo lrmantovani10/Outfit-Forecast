@@ -358,7 +358,6 @@ class User:
                         minShoesRange2 = rangeF
 
             # Adds combinations of outfits 1 and 2 to the queue
-            queueIndex = 0
             outfitQueue = []
 
             outfitQueue.append(output)
@@ -394,7 +393,7 @@ class User:
             self.updateClothingHistory(outfitQueue[0], db)
             self.setCurrOutfit(outfitQueue[0], db)
 
-            self.setQueueIndex(queueIndex, db)
+            self.setQueueIndex(0, db)
             self.setOutfitQueue(outfitQueue, db)
             return outfitQueue[0] # still returns first outfit, but sets up multiple
         else:
