@@ -96,7 +96,8 @@ def classifyNew():
     if user == "Invalid username":
         return "Invalid username"
     # Returns a status string (like below)
-    return user.classifyNew(url, lower, upper, True)
+    output = user.classifyNew(url, lower, upper, True)
+    return json.dumps(output)
 
 @app.route('/createUser/<username>')
 def createUser(username):
