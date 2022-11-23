@@ -51,14 +51,16 @@ userCollection = db["Test"]
 # quoted = quote_plus(url)
 # requests.get('https://outfit-forecast.herokuapp.com/classifyNew/forclothingaddition/' + quoted + '/60/65')
 
-import api
-import json
-username = "forunittests"
-user = api.createPerson(username)
+# import api
+# import json
+# username = "forunittests"
+# user = api.createPerson(username)
+#
+# output = user.dailyRecommender([60,65,63,"rain"], "new", False)
+# forJsonOutput = []
+# for elem in output:
+#     forJsonOutput.append(elem.__dict__)
+#     print(elem.__dict__)
 
-output = user.dailyRecommender([60,65,63,"rain"], "new", False)
-forJsonOutput = []
-for elem in output:
-    forJsonOutput.append(elem.__dict__)
-    print(elem.__dict__)
-
+newUser = back.User("a", [], [], [], [], 0, [])
+print(newUser.setUsername("lucassiphone27604"))

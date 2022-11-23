@@ -59,6 +59,14 @@ class TestConnection(unittest.TestCase):
 class TestFlask(unittest.TestCase):
 
     def test_recommender_endpoint(self):
+        realMongoLink = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
+
+        client = pymongo.MongoClient(realMongoLink)
+        db = client["User"]
+        userCollection = db["Test"]
+
+        userCollection.update_one({'username' : 'forunittests'},{'$set': {'clothingHistory': []}})
+
         recommenderNewTest = requests.get('https://outfit-forecast.herokuapp.com/dailyRecommender/forunittests/60/65/63/nothing/new').json()
         recommenderNewExpected = [{'objectName': 'sweater', 'classification': 'topOuter', 'clothingID': 'leo-0',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater.jpg?alt=media&token=ded9d625-062e-4e61-bbdc-a3988104fb8b',
@@ -256,7 +264,7 @@ class TestUser(unittest.TestCase):
         testOutfit = [testItem4, testItem3, testItem2, testItem1]
         
         self.assertNotEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False), testOutfit, "There are no clothes in the wardrobe")
-        self.assertEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False), None)
+        self.assertEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False), [None, None, None, None])
 
         newUser.updateWardrobe(testItem1, False)
         newUser.updateWardrobe(testItem2, False)
@@ -272,16 +280,20 @@ class TestUser(unittest.TestCase):
         testItem5 = Clothing("sweatshirt", "topOuter", testImg5, "a-4", -20, 120)
         newUser.updateWardrobe(testItem5, False)
         testOutfit2 = [testItem5, testItem3, testItem2, testItem1]
+        newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False) # run to assemble queue with new item
         outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "reject", False)
+
         self.assertNotEqual(outfit2, testOutfit, "Rejected Outfit will not get re-recommended ")
         self.assertEqual(outfit2, testOutfit2)
-        self.assertEqual(newUser.getClothingHistory(), [outfit2]) # testOutfit gets removed from clothingHistory, as it is rejected
-        self.assertEqual(newUser.getCurrOutfit, outfit2) # testOutfit gets removed from CurrOutfit, as it is rejected and replaced by outfit2
+        self.assertEqual(newUser.getClothingHistory(), [outfit, outfit2]) # testOutfit gets removed from clothingHistory the second time, as it is rejected
+        #print(newUser.getCurrOutfit())
+        #print(newUser.getClothingHistory())
+        self.assertEqual(newUser.getCurrOutfit(), outfit2) # testOutfit gets removed from CurrOutfit, as it is rejected and replaced by outfit2
 
         outfit3 = newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False)
         self.assertEqual(outfit3, testOutfit) # testOutfit can be recommended again on new call
-        self.assertEqual(newUser.getClothingHistory(), [outfit2, outfit3])
-        self.assertEqual(newUser.getCurrOutfit, outfit3)
+        self.assertEqual(newUser.getClothingHistory(), [outfit, outfit2, outfit3])
+        self.assertEqual(newUser.getCurrOutfit(), outfit3)
 
 class TestClothing(unittest.TestCase):
 

@@ -413,17 +413,19 @@ class User:
             #         print(fit[i].__dict__)
 
             # don't suggest yesterday's chosen outfit
-            print(outfitQueue)
-            yesterdaysIDs = list(map(lambda x: x.getClothingID(), self.getClothingHistory()[-1]))
-            #print(yesterdaysIDs)
-            if len(outfitQueue) != 1:
-                for x in range(len(outfitQueue)):
-                    todaysIDs = list(map(lambda x: x.getClothingID(), outfitQueue[x]))
-                    #print(todaysIDs)
-                    if yesterdaysIDs == todaysIDs:
-                        outfitQueue.pop(x)
-                        break
-            print(outfitQueue)
+
+            if len(self.getClothingHistory()) > 0:
+                yesterdaysIDs = list(map(lambda x: x.getClothingID(), self.getClothingHistory()[-1]))
+                #print(yesterdaysIDs)
+                if len(outfitQueue) != 1:
+                    for x in range(len(outfitQueue)):
+                        todaysIDs = list(map(lambda x: x.getClothingID(), outfitQueue[x]))
+                        #print(todaysIDs)
+                        if yesterdaysIDs == todaysIDs:
+                            outfitQueue.pop(x)
+                            break
+
+
             # Sets/returns first outfit and updates history with it
             self.updateClothingHistory(outfitQueue[0], db)
             self.setCurrOutfit(outfitQueue[0], db)
