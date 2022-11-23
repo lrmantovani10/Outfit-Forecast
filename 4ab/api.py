@@ -66,7 +66,10 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere, callS
     output = user.dailyRecommender([int(temp_min), int(temp_max), int(feels_like), atmosphere], callStatus)
     forJsonOutput = []
     for elem in output:
-        forJsonOutput.append(elem.__dict__)
+        try:
+            forJsonOutput.append(elem.__dict__)
+        except:
+            forJsonOutput.append(None)
     return json.dumps(forJsonOutput)
 
 @app.route('/classifyNew/<username>/<URL>/<lower>/<upper>')
