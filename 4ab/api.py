@@ -89,7 +89,6 @@ def classifyNew(username, URL, lower, upper):
     user = createPerson(username)
     if user == "Invalid username":
         return "Invalid username"
-    print("hello")
     decodedURL = unquote_plus(URL)
     # Returns a status string (like below)
     return user.classifyNew(decodedURL, lower, upper)
