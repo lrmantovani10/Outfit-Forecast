@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 import backend_functions as back
 import json
 from urllib.parse import unquote_plus
@@ -84,15 +84,20 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere, callS
             forJsonOutput.append(None)
     return json.dumps(forJsonOutput)
 
-@app.route('/classifyNew/<username>/<URL>/<lower>/<upper>')
-def classifyNew(username, URL, lower, upper):
+
+@app.route('/classifyNew', methods=['POST'])
+def classifyNew():
+    username = request.json['username']
+    lower = request.json['lower']
+    upper = request.json['upper']
+    url = request.json['url']
+
     user = createPerson(username)
     if user == "Invalid username":
         return "Invalid username"
 
-    decodedURL = unquote_plus(URL)
     # Returns a status string (like below)
-    return user.classifyNew(decodedURL, lower, upper)
+    return user.classifyNew(url, lower, upper, True)
 
 @app.route('/createUser/<username>')
 def createUser(username):
