@@ -56,12 +56,15 @@ import json
 username = "lucassiphone86330"
 user = api.createPerson(username)
 
-output = user.dailyRecommender([60,65,63,"rain"], "new", False)
-print(output)
+output = user.dailyRecommender([29, 34, 41, "Clear"], "new")
 forJsonOutput = []
 for elem in output:
-    forJsonOutput.append(elem.__dict__)
-    print(elem.__dict__)
+    if elem is not None:
+        forJsonOutput.append(elem.__dict__)
+    else:
+        forJsonOutput.append(None)
+
+print(forJsonOutput)
 
 # match = userCollection.find({'username': 'forclothingaddition'})[0]
 # wardrobeLength = len(match['wardrobe'])

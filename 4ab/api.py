@@ -69,7 +69,7 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere, callS
         try:
             forJsonOutput.append(elem.__dict__)
         except:
-            forJsonOutput.append("None")
+            forJsonOutput.append(None)
     return json.dumps(forJsonOutput)
 
 @app.route('/classifyNew/<username>/<URL>/<lower>/<upper>')

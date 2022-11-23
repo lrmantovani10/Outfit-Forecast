@@ -153,7 +153,10 @@ class User:
             for outfit in newQueue:
                 outfitDict = []
                 for item in outfit:
-                    outfitDict.append(item.__dict__)
+                    try:
+                        outfitDict.append(item.__dict__)
+                    except:
+                        outfitDict.append(None)
                 newQueueDict.append(outfitDict)
             userCollection.update_one({'username': self.getUsername()}, {'$set': {'outfitQueue': newQueueDict}})
         return True
