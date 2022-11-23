@@ -44,6 +44,9 @@ Leo and Daniel: modifying Flask endpoints to implement new outfit rejection feat
 
 <ins>Milestone 4B Implementation Comments:<ins>
 
+classifyNew endpoint:
+- We decided to use a POST method rather than a GET method because passing the image url through the endpoint url was not feasible
+
 classifyNew function has been improved:
 - Decided not to use label_detection at all and instead we are relying solely on  object detection, as this is far more accurate and reliable
 - With more testing of images with Google Vision's label_detection feature, we found that it classified clothes very inaccurately
