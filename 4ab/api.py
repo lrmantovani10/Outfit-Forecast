@@ -95,7 +95,6 @@ def classifyNew():
     user = createPerson(username)
     if user == "Invalid username":
         return "Invalid username"
-
     # Returns a status string (like below)
     return user.classifyNew(url, lower, upper, True)
 
