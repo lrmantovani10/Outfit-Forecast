@@ -51,16 +51,25 @@ userCollection = db["Test"]
 # quoted = quote_plus(url)
 # requests.get('https://outfit-forecast.herokuapp.com/classifyNew/forclothingaddition/' + quoted + '/60/65')
 
-# import api
-# import json
-# username = "forunittests"
-# user = api.createPerson(username)
-#
-# output = user.dailyRecommender([60,65,63,"rain"], "new", False)
-# forJsonOutput = []
-# for elem in output:
-#     forJsonOutput.append(elem.__dict__)
-#     print(elem.__dict__)
+import api
+import json
+username = "lucassiphone86330"
+user = api.createPerson(username)
 
-newUser = back.User("a", [], [], [], [], 0, [])
-print(newUser.setUsername("lucassiphone27604"))
+output = user.dailyRecommender([60,65,63,"rain"], "new", False)
+print(output)
+forJsonOutput = []
+for elem in output:
+    forJsonOutput.append(elem.__dict__)
+    print(elem.__dict__)
+
+# match = userCollection.find({'username': 'forclothingaddition'})[0]
+# wardrobeLength = len(match['wardrobe'])
+# print(wardrobeLength)
+# url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7'
+# quoted = quote_plus(url)
+# print('https://outfit-forecast.herokuapp.com/classifyNew/forclothingaddition/' + quoted + '/60/65')
+#
+# match = userCollection.find({'username': 'forclothingaddition'})[0]
+# wardrobeLength2 = len(match['wardrobe'])
+# print(wardrobeLength2)

@@ -85,7 +85,7 @@ def createUser(username):
     if len(match) == 0:
         newUser = back.User("", [], [], [], [], 0, [])
         if (newUser.setUsername(username)):
-            newInsert = {"username": username, "wardobe" : [], "clothingHistory" : [], "currOutfit" : [], "outfitQueue" : [], "queueIndex" : 0, "location" : []}
+            newInsert = {"username": username, "wardrobe" : [], "clothingHistory" : [], "currOutfit" : [], "outfitQueue" : [], "queueIndex" : 0, "location" : []}
             userCollection.insert_one(newInsert)
             return "User created"
         else:
