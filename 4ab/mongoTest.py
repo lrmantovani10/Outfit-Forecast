@@ -62,7 +62,7 @@ for elem in output:
     if elem is not None:
         forJsonOutput.append(elem.__dict__)
     else:
-        forJsonOutput.append("None")
+        forJsonOutput.append(None)
 
 print(forJsonOutput)
 

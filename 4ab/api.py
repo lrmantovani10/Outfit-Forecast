@@ -22,8 +22,11 @@ def createPerson(username):
     wardrobeDict = match['wardrobe']
     wardrobe = []
     for item in wardrobeDict:
-        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
-                                item['lowerTempBound'], item['upperTempBound'])
+        try:
+            newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
+                                    item['lowerTempBound'], item['upperTempBound'])
+        except:
+            newItem = None
         wardrobe.append(newItem)
 
     clothingHistoryDict = match['clothingHistory']
@@ -31,15 +34,21 @@ def createPerson(username):
     for item in clothingHistoryDict:
         fit = []
         for i in range(4):
-            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
-                                     item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
+            try:
+                fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
+                                         item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
+            except:
+                fit.append(None)
         clothingHistory.append(fit)
 
     currOutfitDict = match['currOutfit']
     currOutfit = []
     for item in currOutfitDict:
-        newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
-                                item['lowerTempBound'], item['upperTempBound'])
+        try:
+            newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
+                                    item['lowerTempBound'], item['upperTempBound'])
+        except:
+            newItem = None
         currOutfit.append(newItem)
 
     queueDict = match['outfitQueue']
@@ -47,8 +56,11 @@ def createPerson(username):
     for item in queueDict:
         fit = []
         for i in range(4):
-            fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
-                                     item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
+            try:
+                fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
+                                         item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
+            except:
+                fit.append(None)
         outfitQueue.append(fit)
 
     return back.User(match['username'], wardrobe, clothingHistory, currOutfit, outfitQueue, match['queueIndex'], match['location'])
@@ -69,7 +81,7 @@ def dailyRecommender(username, temp_min, temp_max, feels_like, atmosphere, callS
         try:
             forJsonOutput.append(elem.__dict__)
         except:
-            forJsonOutput.append("None")
+            forJsonOutput.append(None)
     return json.dumps(forJsonOutput)
 
 @app.route('/classifyNew/<username>/<URL>/<lower>/<upper>')
