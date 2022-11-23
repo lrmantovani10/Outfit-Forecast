@@ -97,7 +97,7 @@ class TestFlask(unittest.TestCase):
                                    'lowerTempBound': -20, 'upperTempBound': 120}]
         self.assertEqual(recommenderRejectTest, recommenderRejectExpected)
 
-    def test_classification_endpoint(self):
+    ''' def test_classification_endpoint(self):
         realMongoLink = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
         client = pymongo.MongoClient(realMongoLink)
         db = client["User"]
@@ -116,7 +116,7 @@ class TestFlask(unittest.TestCase):
         
         wardrobeLength2 = len(match['wardrobe'])
     
-        self.assertEqual(wardrobeLength + 1, wardrobeLength2)
+        self.assertEqual(wardrobeLength + 1, wardrobeLength2) '''
 
     def test_user_creation_endpoint(self):
         now = datetime.now()
