@@ -8,6 +8,7 @@ link = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongod
 client = back.pymongo.MongoClient(link)
 db = client["User"]
 userCollection = db["Test"]
+userCollection.rename('TestOld', dropTarget = True)
 
 # user = back.User("leo", [], [], [], [])
 # top1 = back.Clothing("sweater", "topOuter",
@@ -51,20 +52,6 @@ userCollection = db["Test"]
 # quoted = quote_plus(url)
 # requests.get('https://outfit-forecast.herokuapp.com/classifyNew/forclothingaddition/' + quoted + '/60/65')
 
-import api
-import json
-username = "lucassiphone86330"
-user = api.createPerson(username)
-
-output = user.dailyRecommender([29, 34, 41, "Clear"], "new")
-forJsonOutput = []
-for elem in output:
-    if elem is not None:
-        forJsonOutput.append(elem.__dict__)
-    else:
-        forJsonOutput.append(None)
-
-print(forJsonOutput)
 
 # match = userCollection.find({'username': 'forclothingaddition'})[0]
 # wardrobeLength = len(match['wardrobe'])
@@ -77,25 +64,3 @@ print(forJsonOutput)
 # wardrobeLength2 = len(match['wardrobe'])
 # print(wardrobeLength2)
 
-import api
-
-newUser = api.createUser
-self.assertEqual(newUser.getWardrobe(), [])
-# google vision api takes imageURL from firebase
-testImg = "gs://first-bucket-example/shoes.jpg"
-testItem = Clothing("footwear", "shoes", testImg, "a-0", -20, 120)
-self.assertEqual(newUser.classifyNew(testImg, -20, 120, False), "Image Classified: footwear")
-updatedWardrobe = newUser.getWardrobe()
-# print(updatedWardrobe.__dict__)
-self.assertTrue(clothingItemEquals(updatedWardrobe[0], testItem))
-testImg2 = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater"  # faulty URL, which doesn't work
-self.assertEqual(newUser.classifyNew(testImg2, -20, 120, False), "API Error")
-self.assertTrue(clothingItemEquals(updatedWardrobe[0], testItem))
-testImg3 = "gs://first-bucket-example/t-shirt.jpg"
-testItem3 = Clothing("top", "topInner", testImg3, "a-1", -20, 120)
-self.assertEqual(newUser.classifyNew(testImg3, -20, 120, False), "Image Classified: top")
-self.assertTrue(clothingItemEquals(newUser.getWardrobe()[1], testItem3))
-testImg4 = "gs://first-bucket-example/pants.jpg"
-testItem4 = Clothing("shorts", "bottom", testImg4, "a-2", -20, 120)
-self.assertEqual(newUser.classifyNew(testImg4, -20, 120, False), "Image Classified: shorts")
-self.assertTrue(clothingItemEquals(newUser.getWardrobe()[2], testItem4))
