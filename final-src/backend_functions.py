@@ -191,6 +191,11 @@ class User:
         if 'error' in response_label or 'error' in classification_label:
             return "API Error"
 
+        objectNames = []
+        for label in response_label.label_annotations:
+            lab = label.description.lower()
+            objectNames.append(lab)
+
         found = False
         temp = ""
         name = ""
@@ -220,7 +225,7 @@ class User:
             return "Could not classify the Image"
 
         name = temp
-        newItem = Clothing(name, classification, imgURL, username, lower, upper)
+        newItem = Clothing(name, objectNames, classification, imgURL, username, lower, upper)
         self.updateWardrobe(newItem, db)
         return "Image Classified: " + name
 
@@ -440,7 +445,7 @@ class User:
             return "Invalid call status (must be new/reject)"
 
 class Clothing:
-    def __init__(self, name, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):
+    def __init__(self, name, objectNames, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):
         self.objectName = ""
         self.setObjectName(name)
 
@@ -453,6 +458,8 @@ class Clothing:
         self.lowerTempBound = -20
         self.upperTempBound = 120
         self.setBounds(lowerBound, upperBound)
+
+        self.objectNames = objectNames
 
     # def __eq__(self, other):
     #     if self is None and other is None:
@@ -498,6 +505,9 @@ class Clothing:
     
     def getUpperBound(self):
         return self.upperTempBound
+
+    def getObjectNames(self):
+        return self.objectNames
     
     # ------- setters -------
 
