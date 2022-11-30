@@ -68,31 +68,31 @@ class TestFlask(unittest.TestCase):
         userCollection.update_one({'username' : 'forunittests'},{'$set': {'clothingHistory': []}})
 
         recommenderNewTest = requests.get('https://outfit-forecast.herokuapp.com/dailyRecommender/forunittests/60/65/63/nothing/new').json()
-        recommenderNewExpected = [{'objectName': 'sweater', 'classification': 'topOuter', 'clothingID': 'leo-0',
+        recommenderNewExpected = [{'objectName': 'sweater', 'objectNames': ["outerwear", "jersey", "neck", "sleeve", "collar", "woolen", "sportswear", "font", "wool", "pattern"], 'classification': 'topOuter', 'clothingID': 'leo-0',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater.jpg?alt=media&token=ded9d625-062e-4e61-bbdc-a3988104fb8b',
                                    'lowerTempBound': -10, 'upperTempBound': 110},
-                                  {'objectName': 't-shirt', 'classification': 'topInner', 'clothingID': 'leo-1',
+                                  {'objectName': 't-shirt', 'objectNames': ["clothing", "outerwear", "sleeve", "font", "t-shirt", "electric blue", "pattern", "fashion design", "peach", "carmine"], 'classification': 'topInner', 'clothingID': 'leo-1',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 'sweatpants', 'classification': 'bottom', 'clothingID': 'leo-2',
+                                  {'objectName': 'sweatpants', 'objectNames': ["shoe", "outerwear", "leg", "sleeve", "gester", "sportswear", "active pants", "plant", "denim", "human leg"], 'classification': 'bottom', 'clothingID': 'leo-2',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweatpants.jpg?alt=media&token=9c54025f-94f1-4759-9894-6df682867241',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 'shoes', 'classification': 'shoes', 'clothingID': 'leo-3',
+                                  {'objectName': 'shoes', 'objectNames': ["footwear", "walking shoe", "sneakers", "grey", "sportwear", "font", "electric blue", "athletic shoe", "skate shoe", "outdoor shoe"], 'classification': 'shoes', 'clothingID': 'leo-3',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shoes.jpg?alt=media&token=a1f187f2-ca97-41b2-a39f-8291f34849bd',
                                    'lowerTempBound': -20, 'upperTempBound': 120}]
         self.assertEqual(recommenderNewTest, recommenderNewExpected)
 
         recommenderRejectTest = requests.get('https://outfit-forecast.herokuapp.com/dailyRecommender/forunittests/60/65/63/nothing/reject').json()
-        recommenderRejectExpected = [{'objectName': 'hoodie', 'classification': 'topOuter', 'clothingID': 'leo-4',
+        recommenderRejectExpected = [{'objectName': 'hoodie', 'objectNames': ["clothing", "shoulder", "neck", "sleeve", "grey", "t-shirt", "collar", "blazer", "hood", "jersey"], 'classification': 'topOuter', 'clothingID': 'leo-4',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 't-shirt', 'classification': 'topInner', 'clothingID': 'leo-1',
+                                  {'objectName': 't-shirt', 'objectNames': ["clothing", "outerwear", "sleeve", "font", "t-shirt", "electric blue", "pattern", "fashion design", "peach", "carmine"], 'classification': 'topInner', 'clothingID': 'leo-1',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 'sweatpants', 'classification': 'bottom', 'clothingID': 'leo-2',
+                                  {'objectName': 'sweatpants', 'objectNames': ["shoe", "outerwear", "leg", "sleeve", "gester", "sportswear", "active pants", "plant", "denim", "human leg"], 'classification': 'bottom', 'clothingID': 'leo-2',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweatpants.jpg?alt=media&token=9c54025f-94f1-4759-9894-6df682867241',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 'shoes', 'classification': 'shoes', 'clothingID': 'leo-3',
+                                  {'objectName': 'shoes', 'objectNames': ["footwear", "walking shoe", "sneakers", "grey", "sportwear", "font", "electric blue", "athletic shoe", "skate shoe", "outdoor shoe"], 'classification': 'shoes', 'clothingID': 'leo-3',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shoes.jpg?alt=media&token=a1f187f2-ca97-41b2-a39f-8291f34849bd',
                                    'lowerTempBound': -20, 'upperTempBound': 120}]
         self.assertEqual(recommenderRejectTest, recommenderRejectExpected)
