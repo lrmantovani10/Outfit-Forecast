@@ -8,7 +8,6 @@ link = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongod
 client = back.pymongo.MongoClient(link)
 db = client["User"]
 userCollection = db["Test"]
-userCollection.rename('TestOld', dropTarget = True)
 
 # user = back.User("leo", [], [], [], [])
 # top1 = back.Clothing("sweater", "topOuter",
@@ -63,4 +62,3 @@ userCollection.rename('TestOld', dropTarget = True)
 # match = userCollection.find({'username': 'forclothingaddition'})[0]
 # wardrobeLength2 = len(match['wardrobe'])
 # print(wardrobeLength2)
-

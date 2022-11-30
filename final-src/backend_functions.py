@@ -12,6 +12,19 @@ client = pymongo.MongoClient(link)
 userDB = client["User"]
 userCollection = userDB["Test"]
 
+def similarExists(target, list):
+    target = lower(target)
+    list = list(map(lambda x: lower(x), list))
+    for str in list:
+        if target in str:
+            return True
+    return False
+
+def extremeAtmosphereCheck(atmosphere):
+    atmosphere = lower(atmosphere)
+    if 'rain' in atmosphere or 'storm' in atmosphere or 'snow' in atmosphere or 'sleet' in atmosphere or 'mist' in atmosphere or 'flood' in atmosphere or 'blizzard' in atmosphere or 'hail' in atmosphere or 'freezing' in atmosphere or 'blizzard' in atmosphere:
+        return True
+
 # only user setters need to access and modify db
 class User:
     def __init__(self, username, wardrobe, clothingHistory, currOutfit, outfitQueue, queueIndex, location):
@@ -291,8 +304,8 @@ class User:
                 if item.classification == "topOuter":
                     if feels_like >= 75:
                         continue
-                    if 'rain' in atmosphere or 'snow' in atmosphere:
-                        if 'jacket' not in item.getObjectName() and 'coat' not in item.getObjectName() and 'wind' not in item.getObjectName() and 'parka' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
+                    if extremeAtmosphereCheck(atmosphere):
+                        if not similarExists('jacket', item.getObjectNames()) and not similarExists('coat', item.getObjectNames()) and not similarExists('wind', item.getObjectNames()) and not similarExists('parka', item.getObjectNames()) and not similarExists('rain', item.getObjectNames()) and not similarExists('snow', item.getObjectNames()):
                             if topOuterConditionsMet:
                                 continue
                         else:
@@ -323,8 +336,8 @@ class User:
                         output2[1] = item
                         minTopInnerRange2 = rangeF
                 if item.classification == "bottom":
-                    if 'rain' in atmosphere or 'snow' in atmosphere:
-                        if 'short' in item.getObjectName():
+                    if extremeAtmosphereCheck(atmosphere):
+                        if similarExists('short', item.getObjectNames()):
                             if bottomConditionsMet:
                                 continue
                         else:
@@ -346,8 +359,8 @@ class User:
                         minBottomRange2 = rangeF
 
                 if item.classification == "shoes":
-                    if 'rain' in atmosphere or 'snow' in atmosphere:
-                        if 'boot' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
+                    if extremeAtmosphereCheck(atmosphere):
+                        if not similarExists('boot', item.getObjectNames()) and not similarExists('rain', item.getObjectNames()) and not similarExists('snow', item.getObjectNames()):
                             if shoesConditionsMet:
                                 continue
                         else:
@@ -411,14 +424,6 @@ class User:
                             allowed = False
                 if allowed:
                     outfitQueue.append(output2)
-
-            # print(outfitQueue)
-            # for fit in outfitQueue:
-            #     print("FIT:")
-            #     for i in range(4):
-            #         if fit[i] is None:
-            #             print()
-            #         print(fit[i].__dict__)
 
             # don't suggest yesterday's chosen outfit
 
