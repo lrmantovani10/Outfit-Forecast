@@ -13,15 +13,14 @@ userDB = client["User"]
 userCollection = userDB["Test"]
 
 def similarExists(target, list):
-    target = lower(target)
-    list = list(map(lambda x: lower(x), list))
-    for str in list:
+    target = target.lower()
+    for str in [x.lower() for x in list]:
         if target in str:
             return True
     return False
 
 def extremeAtmosphereCheck(atmosphere):
-    atmosphere = lower(atmosphere)
+    atmosphere = atmosphere.lower()
     if 'rain' in atmosphere or 'storm' in atmosphere or 'snow' in atmosphere or 'sleet' in atmosphere or 'mist' in atmosphere or 'flood' in atmosphere or 'blizzard' in atmosphere or 'hail' in atmosphere or 'freezing' in atmosphere or 'blizzard' in atmosphere:
         return True
 
