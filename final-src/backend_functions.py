@@ -292,6 +292,11 @@ class User:
             shoesConditionsMet = False
             shoesWCM = False
 
+            outerBad2 = False
+            innerBad2 = False
+            bottomBad2 = False
+            shoesBad2 = False
+
             output = [None, None, None, None]
             output2 = [None, None, None, None]
 
@@ -338,10 +343,11 @@ class User:
                         else:
                             if not topOuterConditionsMet:
                                 topOuterConditionsMet = True
+                                output2[0] = output[0]
                                 output[0] = item
-                                output2[0] = None
+                                minTopOuterRange2 = minTopOuterRange
                                 minTopOuterRange = diff
-                                minTopOuterRange2 = math.inf
+                                outerBad2 = True
                                 if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
                                     if outerWCM:
                                         outerWCM = False
@@ -354,10 +360,11 @@ class User:
                     else:
                         if not outerWCM:
                             outerWCM = True
+                            output2[0] = output[0]
                             output[0] = item
-                            output2[0] = None
+                            minTopOuterRange2 = minTopOuterRange
                             minTopOuterRange = diff
-                            minTopOuterRange2 = math.inf
+                            outerBad2 = True
                             continue
 
                     if diff < minTopOuterRange:
@@ -365,7 +372,9 @@ class User:
                         output[0] = item
                         minTopOuterRange2 = minTopOuterRange
                         minTopOuterRange = diff
-                    elif diff < minTopOuterRange2:
+                    elif diff < minTopOuterRange2 or outerBad2:
+                        if outerBad2:
+                            outerBad2 = False
                         output2[0] = item
                         minTopOuterRange2 = diff
                 if item.classification == "topInner":
@@ -375,10 +384,11 @@ class User:
                     else:
                         if not innerWCM:
                             innerWCM = True
+                            output2[1] = output[1]
                             output[1] = item
-                            output2[1] = None
+                            minTopInnerRange2 = minTopInnerRange
                             minTopInnerRange = diff
-                            minTopInnerRange2 = math.inf
+                            innerBad2 = True
                             continue
                     # no topInnerConditions yet, might add short/long sleeve in the future
                     if diff < minTopInnerRange:
@@ -386,7 +396,9 @@ class User:
                         output[1] = item
                         minTopInnerRange2 = minTopInnerRange
                         minTopInnerRange = diff
-                    elif diff < minTopInnerRange2:
+                    elif diff < minTopInnerRange2 or innerBad2:
+                        if innerBad2:
+                            innerBad2 = False
                         output2[1] = item
                         minTopInnerRange2 = diff
                 if item.classification == "bottom":
@@ -398,10 +410,11 @@ class User:
                         else:
                             if not bottomConditionsMet:
                                 bottomConditionsMet = True
+                                output2[2] = output[2]
                                 output[2] = item
-                                output2[2] = None
+                                minBottomRange2 = minBottomRange
                                 minBottomRange = diff
-                                minBottomRange2 = math.inf
+                                bottomBad2 = True
                                 if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
                                     if bottomWCM:
                                         bottomWCM = False
@@ -414,10 +427,11 @@ class User:
                     else:
                         if not bottomWCM:
                             bottomWCM = True
+                            output2[2] = output[2]
                             output[2] = item
-                            output2[2] = None
+                            minBottomRange2 = minBottomRange
                             minBottomRange = diff
-                            minBottomRange2 = math.inf
+                            bottomBad2 = True
                             continue
 
                     if diff < minBottomRange:
@@ -425,7 +439,9 @@ class User:
                         output[2] = item
                         minBottomRange2 = minBottomRange
                         minBottomRange = diff
-                    elif diff < minBottomRange2:
+                    elif diff < minBottomRange2 or bottomBad2:
+                        if bottomBad2:
+                            bottomBad2 = False
                         output2[2] = item
                         minBottomRange2 = diff
 
@@ -437,10 +453,11 @@ class User:
                         else:
                             if not shoesConditionsMet:
                                 shoesConditionsMet = True
+                                output2[3] = output[3]
                                 output[3] = item
-                                output2[3] = None
+                                minShoesRange2 = minShoesRange
                                 minShoesRange = diff
-                                minShoesRange2 = math.inf
+                                shoesBad2 = True
                                 if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
                                     if shoesWCM:
                                         shoesWCM = False
@@ -453,10 +470,11 @@ class User:
                     else:
                         if not shoesWCM:
                             shoesWCM = True
+                            output2[3] = output[3]
                             output[3] = item
-                            output2[3] = None
+                            minShoesRange2 = minShoesRange
                             minShoesRange = diff
-                            minShoesRange2 = math.inf
+                            shoesBad2 = True
                             continue
 
                     if diff < minShoesRange:
@@ -464,7 +482,9 @@ class User:
                         output[3] = item
                         minShoesRange2 = minShoesRange
                         minShoesRange = diff
-                    elif diff < minShoesRange2:
+                    elif diff < minShoesRange2 or shoesBad2:
+                        if shoesBad2:
+                            shoesBad2 = False
                         output2[3] = item
                         minShoesRange2 = diff
 
