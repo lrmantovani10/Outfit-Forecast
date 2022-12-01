@@ -284,9 +284,13 @@ class User:
             minShoesRange2 = math.inf
 
             topOuterConditionsMet = False
+            outerWCM = False
             topInnerConditionsMet = False
+            innerWCM = False
             bottomConditionsMet = False
+            bottomWCM = False
             shoesConditionsMet = False
+            shoesWCM = False
 
             output = [None, None, None, None]
             output2 = [None, None, None, None]
@@ -323,7 +327,7 @@ class User:
                 if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
                     continue
 
-                rangeF = upper - lower
+                diff = abs(feels_like - (lower + upper) // 2)
                 if item.classification == "topOuter":
                     if feels_like >= 75:
                         continue
@@ -336,29 +340,57 @@ class User:
                                 topOuterConditionsMet = True
                                 output[0] = item
                                 output2[0] = None
-                                minTopOuterRange = rangeF
-                                minTopInnerRange2 = math.inf
+                                minTopOuterRange = diff
+                                minTopOuterRange2 = math.inf
+                                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                                    if outerWCM:
+                                        outerWCM = False
+                                else:
+                                    outerWCM = True
                                 continue
+                    if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                        if outerWCM:
+                            continue
+                    else:
+                        if not outerWCM:
+                            outerWCM = True
+                            output[0] = item
+                            output2[0] = None
+                            minTopOuterRange = diff
+                            minTopOuterRange2 = math.inf
+                            continue
 
-                    if rangeF < minTopOuterRange:
+                    if diff < minTopOuterRange:
                         output2[0] = output[0]
                         output[0] = item
                         minTopOuterRange2 = minTopOuterRange
-                        minTopOuterRange = rangeF
-                    elif rangeF < minTopOuterRange2:
+                        minTopOuterRange = diff
+                    elif diff < minTopOuterRange2:
                         output2[0] = item
-                        minTopOuterRange2 = rangeF
+                        minTopOuterRange2 = diff
                 if item.classification == "topInner":
+                    if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                        if innerWCM:
+                            continue
+                    else:
+                        if not innerWCM:
+                            innerWCM = True
+                            output[1] = item
+                            output2[1] = None
+                            minTopInnerRange = diff
+                            minTopInnerRange2 = math.inf
+                            continue
                     # no topInnerConditions yet, might add short/long sleeve in the future
-                    if rangeF < minTopInnerRange:
+                    if diff < minTopInnerRange:
                         output2[1] = output[1]
                         output[1] = item
                         minTopInnerRange2 = minTopInnerRange
-                        minTopInnerRange = rangeF
-                    elif rangeF < minTopInnerRange2:
+                        minTopInnerRange = diff
+                    elif diff < minTopInnerRange2:
                         output2[1] = item
-                        minTopInnerRange2 = rangeF
+                        minTopInnerRange2 = diff
                 if item.classification == "bottom":
+
                     if extremeAtmosphereCheck(atmosphere):
                         if similarExists('short', item.getObjectNames()):
                             if bottomConditionsMet:
@@ -368,18 +400,34 @@ class User:
                                 bottomConditionsMet = True
                                 output[2] = item
                                 output2[2] = None
-                                minBottomRange = rangeF
+                                minBottomRange = diff
                                 minBottomRange2 = math.inf
+                                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                                    if bottomWCM:
+                                        bottomWCM = False
+                                else:
+                                    bottomWCM = True
                                 continue
+                    if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                        if bottomWCM:
+                            continue
+                    else:
+                        if not bottomWCM:
+                            bottomWCM = True
+                            output[2] = item
+                            output2[2] = None
+                            minBottomRange = diff
+                            minBottomRange2 = math.inf
+                            continue
 
-                    if rangeF < minBottomRange:
+                    if diff < minBottomRange:
                         output2[2] = output[2]
                         output[2] = item
                         minBottomRange2 = minBottomRange
-                        minBottomRange = rangeF
-                    elif rangeF < minBottomRange2:
+                        minBottomRange = diff
+                    elif diff < minBottomRange2:
                         output2[2] = item
-                        minBottomRange2 = rangeF
+                        minBottomRange2 = diff
 
                 if item.classification == "shoes":
                     if extremeAtmosphereCheck(atmosphere):
@@ -391,18 +439,34 @@ class User:
                                 shoesConditionsMet = True
                                 output[3] = item
                                 output2[3] = None
-                                minShoesRange = rangeF
+                                minShoesRange = diff
                                 minShoesRange2 = math.inf
+                                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                                    if shoesWCM:
+                                        shoesWCM = False
+                                else:
+                                    shoesWCM = True
                                 continue
+                    if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                        if shoesWCM:
+                            continue
+                    else:
+                        if not shoesWCM:
+                            shoesWCM = True
+                            output[3] = item
+                            output2[3] = None
+                            minShoesRange = diff
+                            minShoesRange2 = math.inf
+                            continue
 
-                    if rangeF < minShoesRange:
+                    if diff < minShoesRange:
                         output2[3] = output[3]
                         output[3] = item
                         minShoesRange2 = minShoesRange
-                        minShoesRange = rangeF
-                    elif rangeF < minShoesRange2:
+                        minShoesRange = diff
+                    elif diff < minShoesRange2:
                         output2[3] = item
-                        minShoesRange2 = rangeF
+                        minShoesRange2 = diff
 
             # Adds combinations of outfits 1 and 2 to the queue
             outfitQueue = []
