@@ -536,7 +536,7 @@ class User:
                 if allowed:
                     outfitQueue.append(output2)
 
-            # don't suggest yesterday's exact chosen outfit
+            # don't suggest yesterday's exact chosen outfit, but move it to back of recommended
             if len(self.getClothingHistory()) > 0 and output2 != [None, None, None, None]:
                 yesterdaysIDs = list(map(lambda x: getID(x), self.getClothingHistory()[-1]))
                 #print(yesterdaysIDs)
@@ -545,7 +545,9 @@ class User:
                         todaysIDs = list(map(lambda x: getID(x), outfitQueue[y]))
                         #print(todaysIDs)
                         if yesterdaysIDs == todaysIDs:
-                            outfitQueue.pop(y)
+                            dup = outfitQueue[y]
+                            outfitQueue.append(dup)
+                            outfitQueue.pop(y) # remove original duplicate, put it last
                             break
 
             # Sets/returns first outfit and updates history with it
