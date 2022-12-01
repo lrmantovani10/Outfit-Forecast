@@ -461,7 +461,8 @@ class User:
                             break
 
             # Sets/returns first outfit and updates history with it
-            self.updateClothingHistory(outfitQueue[0], db)
+            if outfitQueue[0] != [None, None, None, None]:
+                self.updateClothingHistory(outfitQueue[0], db)
             self.setCurrOutfit(outfitQueue[0], db)
 
             self.setQueueIndex(0, db)

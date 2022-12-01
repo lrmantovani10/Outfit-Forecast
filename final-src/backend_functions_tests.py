@@ -107,7 +107,7 @@ class TestFlask(unittest.TestCase):
    
         wardrobeLength = len(match['wardrobe'])
 
-        url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7'
+        url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast-2.appspot.com/o/test-coat.jpg?alt=media&token=4905d3af-43af-4c01-a85f-5dbf0dd40996'
 
         body = {'username':'forclothingaddition', 'lower':60, 'upper':65, 'url':url}
         r = requests.post('https://outfit-forecast.herokuapp.com/classifyNew', json=body)
