@@ -130,7 +130,6 @@ class User:
                         outfitDict.append(item.__dict__)
                     else:
                         outfitDict.append(None)
-                print(outfitDict)
                 userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
             return True
         else:
@@ -292,6 +291,24 @@ class User:
             output = [None, None, None, None]
             output2 = [None, None, None, None]
 
+            # outerCount = 0
+            # innerCount = 0
+            # bottomCount = 0
+            # shoesCount = 0
+            # for item in self.getWardrobe():
+            #     if item.classification == "shoes":
+            #         shoesCount += 1
+            #     if item.classification == "topOuter":
+            #         outerCount += 1
+            #     if item.classification == "topInner":
+            #         innerCount += 1
+            #     if item.classification == "bottom":
+            #         bottomCount += 1
+
+            yesterdaysIDs = []
+            if len(self.getClothingHistory()) > 0:
+                yesterdaysIDs = list(map(lambda x: getID(x), self.getClothingHistory()[-1]))
+
             # CURRENT ALGORITHM: CHOOSES CLOTHING ITEM WITH TIGHTEST (SMALLEST) SURVEY TEMPERATURE RANGE
             # WHERE THE DAILY MAX AND MIN TEMPERATURES FALL INTO THAT RANGE
 
@@ -431,9 +448,8 @@ class User:
                 if allowed:
                     outfitQueue.append(output2)
 
-            # don't suggest yesterday's chosen outfit
-
-            if len(self.getClothingHistory()) > 0:
+            # don't suggest yesterday's exact chosen outfit
+            if len(self.getClothingHistory()) > 0 and output2 != [None, None, None, None]:
                 yesterdaysIDs = list(map(lambda x: getID(x), self.getClothingHistory()[-1]))
                 #print(yesterdaysIDs)
                 if len(outfitQueue) != 1:
@@ -444,7 +460,6 @@ class User:
                             outfitQueue.pop(x)
                             break
 
-            print(outfitQueue[0])
             # Sets/returns first outfit and updates history with it
             self.updateClothingHistory(outfitQueue[0], db)
             self.setCurrOutfit(outfitQueue[0], db)
