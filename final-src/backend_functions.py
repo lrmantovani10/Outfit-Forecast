@@ -116,39 +116,23 @@ class User:
 
     # outfit must be a list of 4 clothing items
     def updateClothingHistory(self, outfit, db = True):
-        if type(outfit) is list:
-            if (len(outfit) != 4):
-                return False
-            for x in outfit:
-                if type(x) is not Clothing:
-                    return False
-            self.clothingHistory.append(outfit)
-            if db:
-                outfitDict = []
-                for item in outfit:
-                    outfitDict.append(item.__dict__)
-                userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
-            return True   
-        else:
-            return False
+        self.clothingHistory.append(outfit)
+        if db:
+            outfitDict = []
+            for item in outfit:
+                outfitDict.append(item.__dict__)
+            userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
+        return True
     
     # outfit must be a list of 4 clothing items
     def setCurrOutfit(self, outfit, db = True):
-        if type(outfit) is list:
-            if (len(outfit) != 4):
-                return False
-            for x in outfit:
-                if type(x) is not Clothing:
-                    return False
-            self.currOutfit = outfit
-            if db:
-                outfitDict = []
-                for item in outfit:
-                    outfitDict.append(item.__dict__)
-                userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfitDict}})
-            return True   
-        else:
-            return False
+        self.currOutfit = outfit
+        if db:
+            outfitDict = []
+            for item in outfit:
+                outfitDict.append(item.__dict__)
+            userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfitDict}})
+        return True
 
     def setQueueIndex(self, index, db = True):
         if type(index) is not int:
