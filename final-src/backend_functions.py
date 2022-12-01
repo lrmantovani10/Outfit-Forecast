@@ -328,9 +328,9 @@ class User:
                 lower = item.getLowerBound()
                 upper = item.getUpperBound()
 
-                # this might end up not giving you a fit!!!
-                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                    continue
+                # # this might end up not giving you a fit!!!
+                # if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                #     continue
 
                 diff = abs(feels_like - (lower + upper) // 2)
                 if item.classification == "topOuter":
@@ -488,6 +488,10 @@ class User:
                         output2[3] = item
                         minShoesRange2 = diff
 
+                # # Debug print outfit after each item
+                # print(output)
+                # print(output2)
+                # print("---")
             # Adds combinations of outfits 1 and 2 to the queue
             outfitQueue = []
 
@@ -537,11 +541,11 @@ class User:
                 yesterdaysIDs = list(map(lambda x: getID(x), self.getClothingHistory()[-1]))
                 #print(yesterdaysIDs)
                 if len(outfitQueue) != 1:
-                    for x in range(len(outfitQueue)):
-                        todaysIDs = list(map(lambda x: getID(x), outfitQueue[x]))
+                    for y in range(len(outfitQueue)):
+                        todaysIDs = list(map(lambda x: getID(x), outfitQueue[y]))
                         #print(todaysIDs)
                         if yesterdaysIDs == todaysIDs:
-                            outfitQueue.pop(x)
+                            outfitQueue.pop(y)
                             break
 
             # Sets/returns first outfit and updates history with it
