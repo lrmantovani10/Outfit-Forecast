@@ -116,23 +116,45 @@ class User:
 
     # outfit must be a list of 4 clothing items
     def updateClothingHistory(self, outfit, db = True):
-        self.clothingHistory.append(outfit)
-        if db:
-            outfitDict = []
-            for item in outfit:
-                outfitDict.append(item.__dict__)
-            userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
-        return True
+        if type(outfit) is list:
+            if (len(outfit) != 4):
+                return False
+            for x in outfit:
+                if type(x) is not Clothing:
+                    return False
+            self.clothingHistory.append(outfit)
+            if db:
+                outfitDict = []
+                for item in outfit:
+                    if item is not None:
+                        outfitDict.append(item.__dict__)
+                    else:
+                        outfitDict.append(None)
+                userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
+            return True
+        else:
+            return False
     
     # outfit must be a list of 4 clothing items
     def setCurrOutfit(self, outfit, db = True):
-        self.currOutfit = outfit
-        if db:
-            outfitDict = []
-            for item in outfit:
-                outfitDict.append(item.__dict__)
-            userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfitDict}})
-        return True
+        if type(outfit) is list:
+            if (len(outfit) != 4):
+                return False
+            for x in outfit:
+                if type(x) is not Clothing:
+                    return False
+            self.currOutfit = outfit
+            if db:
+                outfitDict = []
+                for item in outfit:
+                    if item is not None:
+                        outfitDict.append(item.__dict__)
+                    else:
+                        outfitDict.append(None)
+                userCollection.update_one({'username': self.getUsername()}, {'$set': {'currOutfit': outfitDict}})
+            return True
+        else:
+            return False
 
     def setQueueIndex(self, index, db = True):
         if type(index) is not int:
@@ -411,17 +433,18 @@ class User:
             # don't suggest yesterday's chosen outfit
 
             if len(self.getClothingHistory()) > 0:
-                yesterdaysIDs = list(map(lambda x: x.getClothingID(), self.getClothingHistory()[-1]))
+                yesterdaysIDs = list(map(lambda x: getID(x), self.getClothingHistory()[-1]))
                 #print(yesterdaysIDs)
                 if len(outfitQueue) != 1:
                     for x in range(len(outfitQueue)):
-                        todaysIDs = list(map(lambda x: x.getClothingID(), outfitQueue[x]))
+                        todaysIDs = list(map(lambda x: getID(x), outfitQueue[x]))
                         #print(todaysIDs)
                         if yesterdaysIDs == todaysIDs:
                             outfitQueue.pop(x)
                             break
 
-
+            print(output)
+            print(output2)
             # Sets/returns first outfit and updates history with it
             self.updateClothingHistory(outfitQueue[0], db)
             self.setCurrOutfit(outfitQueue[0], db)
@@ -431,6 +454,11 @@ class User:
             return outfitQueue[0] # still returns first outfit, but sets up multiple
         else:
             return "Invalid call status (must be new/reject)"
+
+def getID(x):
+    if x is not None:
+        return x.getClothingID()
+    return None
 
 class Clothing:
     def __init__(self, name, objectNames, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):

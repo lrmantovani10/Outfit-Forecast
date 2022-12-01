@@ -10,6 +10,6 @@ db = client["User"]
 userCollection = db["Test"]
 
 import api
-debugUser = api.createUser('debug')
+debugUser = api.createPerson('debug')
 
-
+debugUser.dailyRecommender([60, 65, 63, "nothing"], "new")
