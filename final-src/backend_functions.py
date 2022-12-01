@@ -120,7 +120,7 @@ class User:
             if (len(outfit) != 4):
                 return False
             for x in outfit:
-                if type(x) is not Clothing:
+                if type(x) is not Clothing and x is not None:
                     return False
             self.clothingHistory.append(outfit)
             if db:
@@ -130,6 +130,7 @@ class User:
                         outfitDict.append(item.__dict__)
                     else:
                         outfitDict.append(None)
+                print(outfitDict)
                 userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
             return True
         else:
@@ -141,7 +142,7 @@ class User:
             if (len(outfit) != 4):
                 return False
             for x in outfit:
-                if type(x) is not Clothing:
+                if type(x) is not Clothing and x is not None:
                     return False
             self.currOutfit = outfit
             if db:
@@ -443,8 +444,7 @@ class User:
                             outfitQueue.pop(x)
                             break
 
-            print(output)
-            print(output2)
+            print(outfitQueue[0])
             # Sets/returns first outfit and updates history with it
             self.updateClothingHistory(outfitQueue[0], db)
             self.setCurrOutfit(outfitQueue[0], db)
