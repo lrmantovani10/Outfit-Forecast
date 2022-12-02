@@ -314,35 +314,12 @@ class User:
             minShoesRange2 = math.inf
 
             topOuterConditionsMet = False
-            outerWCM = False
             topInnerConditionsMet = False
-            innerWCM = False
             bottomConditionsMet = False
-            bottomWCM = False
             shoesConditionsMet = False
-            shoesWCM = False
-
-            outerBad2 = False
-            innerBad2 = False
-            bottomBad2 = False
-            shoesBad2 = False
 
             output = [None, None, None, None]
             output2 = [None, None, None, None]
-
-            # outerCount = 0
-            # innerCount = 0
-            # bottomCount = 0
-            # shoesCount = 0
-            # for item in self.getWardrobe():
-            #     if item.classification == "shoes":
-            #         shoesCount += 1
-            #     if item.classification == "topOuter":
-            #         outerCount += 1
-            #     if item.classification == "topInner":
-            #         innerCount += 1
-            #     if item.classification == "bottom":
-            #         bottomCount += 1
 
             yesterdaysIDs = []
             if len(self.getClothingHistory()) > 0:
@@ -377,62 +354,27 @@ class User:
                                 output[0] = item
                                 minTopOuterRange2 = minTopOuterRange
                                 minTopOuterRange = diff
-                                outerBad2 = True
-                                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                                    if outerWCM:
-                                        outerWCM = False
-                                else:
-                                    outerWCM = True
                                 continue
-                    if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                        if outerWCM:
-                            continue
-                    else:
-                        if not outerWCM:
-                            outerWCM = True
-                            output2[0] = output[0]
-                            output[0] = item
-                            minTopOuterRange2 = minTopOuterRange
-                            minTopOuterRange = diff
-                            outerBad2 = True
-                            continue
 
                     if diff < minTopOuterRange:
                         output2[0] = output[0]
                         output[0] = item
                         minTopOuterRange2 = minTopOuterRange
                         minTopOuterRange = diff
-                    elif diff < minTopOuterRange2 or outerBad2:
-                        if outerBad2:
-                            outerBad2 = False
+                    elif diff < minTopOuterRange2:
                         output2[0] = item
                         minTopOuterRange2 = diff
                 if item.classification == "topInner":
-                    if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                        if innerWCM:
-                            continue
-                    else:
-                        if not innerWCM:
-                            innerWCM = True
-                            output2[1] = output[1]
-                            output[1] = item
-                            minTopInnerRange2 = minTopInnerRange
-                            minTopInnerRange = diff
-                            innerBad2 = True
-                            continue
                     # no topInnerConditions yet, might add short/long sleeve in the future
                     if diff < minTopInnerRange:
                         output2[1] = output[1]
                         output[1] = item
                         minTopInnerRange2 = minTopInnerRange
                         minTopInnerRange = diff
-                    elif diff < minTopInnerRange2 or innerBad2:
-                        if innerBad2:
-                            innerBad2 = False
+                    elif diff < minTopInnerRange2:
                         output2[1] = item
                         minTopInnerRange2 = diff
                 if item.classification == "bottom":
-
                     if extremeAtmosphereCheck(atmosphere):
                         if similarExists('short', item.getObjectNames()):
                             if bottomConditionsMet:
@@ -444,34 +386,14 @@ class User:
                                 output[2] = item
                                 minBottomRange2 = minBottomRange
                                 minBottomRange = diff
-                                bottomBad2 = True
-                                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                                    if bottomWCM:
-                                        bottomWCM = False
-                                else:
-                                    bottomWCM = True
                                 continue
-                    if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                        if bottomWCM:
-                            continue
-                    else:
-                        if not bottomWCM:
-                            bottomWCM = True
-                            output2[2] = output[2]
-                            output[2] = item
-                            minBottomRange2 = minBottomRange
-                            minBottomRange = diff
-                            bottomBad2 = True
-                            continue
 
                     if diff < minBottomRange:
                         output2[2] = output[2]
                         output[2] = item
                         minBottomRange2 = minBottomRange
                         minBottomRange = diff
-                    elif diff < minBottomRange2 or bottomBad2:
-                        if bottomBad2:
-                            bottomBad2 = False
+                    elif diff < minBottomRange2:
                         output2[2] = item
                         minBottomRange2 = diff
 
@@ -487,34 +409,14 @@ class User:
                                 output[3] = item
                                 minShoesRange2 = minShoesRange
                                 minShoesRange = diff
-                                shoesBad2 = True
-                                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                                    if shoesWCM:
-                                        shoesWCM = False
-                                else:
-                                    shoesWCM = True
                                 continue
-                    if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                        if shoesWCM:
-                            continue
-                    else:
-                        if not shoesWCM:
-                            shoesWCM = True
-                            output2[3] = output[3]
-                            output[3] = item
-                            minShoesRange2 = minShoesRange
-                            minShoesRange = diff
-                            shoesBad2 = True
-                            continue
 
                     if diff < minShoesRange:
                         output2[3] = output[3]
                         output[3] = item
                         minShoesRange2 = minShoesRange
                         minShoesRange = diff
-                    elif diff < minShoesRange2 or shoesBad2:
-                        if shoesBad2:
-                            shoesBad2 = False
+                    elif diff < minShoesRange2:
                         output2[3] = item
                         minShoesRange2 = diff
 
@@ -524,7 +426,17 @@ class User:
                 # print("---")
             # Adds combinations of outfits 1 and 2 to the queue
             outfitQueue = []
-
+            for item in output:
+                try:
+                    print(item.imgURL)
+                except:
+                    print(None)
+            print("---")
+            for item in output2:
+                try:
+                    print(item.imgURL)
+                except:
+                    print(None)
             dupMap = {}
             outfitQueue.append(output)
             dupMap[genKey(output)] = True
