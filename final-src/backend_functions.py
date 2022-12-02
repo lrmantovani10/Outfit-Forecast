@@ -24,6 +24,15 @@ def extremeAtmosphereCheck(atmosphere):
     if 'rain' in atmosphere or 'storm' in atmosphere or 'snow' in atmosphere or 'sleet' in atmosphere or 'mist' in atmosphere or 'flood' in atmosphere or 'blizzard' in atmosphere or 'hail' in atmosphere or 'freezing' in atmosphere or 'blizzard' in atmosphere:
         return True
 
+def genKey(fit):
+    str = ""
+    for item in fit:
+        try:
+            str += item.getClothingID()
+        except:
+            str += "None"
+    return str
+
 # only user setters need to access and modify db
 class User:
     def __init__(self, username, wardrobe, clothingHistory, currOutfit, outfitQueue, queueIndex, location):
@@ -495,11 +504,18 @@ class User:
             # Adds combinations of outfits 1 and 2 to the queue
             outfitQueue = []
 
+            dupMap = {}
             outfitQueue.append(output)
+            dupMap[genKey(output)] = True
 
             for i in range(4):
                 if output2[i] != None:
-                    outfitQueue.append(output[:i] + [output2[i]] + output[i+1:])
+                    fit = output[:i] + [output2[i]] + output[i+1:]
+                    try:
+                        temp = dupMap[genKey(fit)]
+                    except:
+                        outfitQueue.append(fit)
+                        dupMap[genKey(fit)] = True
 
             for i in range(4):
                 if output2[i] != None:
@@ -508,7 +524,11 @@ class User:
                             newOutput = output
                             newOutput[i] = output2[i]
                             newOutput[j] = output2[j]
-                            outfitQueue.append(newOutput)
+                            try:
+                                temp = dupMap[genKey(newOutput)]
+                            except:
+                                outfitQueue.append(newOutput)
+                                dupMap[genKey(newOutput)] = True
 
             for i in range(4):
                 if output2[i] != None:
@@ -520,7 +540,11 @@ class User:
                                     newOutput[i] = output2[i]
                                     newOutput[j] = output2[j]
                                     newOutput[k] = output2[k]
-                                    outfitQueue.append(newOutput)
+                                    try:
+                                        temp = dupMap[genKey(newOutput)]
+                                    except:
+                                        outfitQueue.append(newOutput)
+                                        dupMap[genKey(newOutput)] = True
 
             allowedNones = []
             for idx, piece in enumerate(output):
@@ -534,7 +558,11 @@ class User:
                         if idx not in allowedNones:
                             allowed = False
                 if allowed:
-                    outfitQueue.append(output2)
+                    try:
+                        temp = dupMap[genKey(output2)]
+                    except:
+                        outfitQueue.append(output2)
+                        dupMap[genKey(output2)] = True
 
             # don't suggest yesterday's exact chosen outfit, but move it to back of recommended
             if len(self.getClothingHistory()) > 0 and output2 != [None, None, None, None]:
@@ -551,7 +579,7 @@ class User:
                             break
 
             # Sets/returns first outfit and updates history with it
-            if outfitQueue[0] != [None, None, None, None]:
+            if outfitQueue[0] != [None, None, None, None]: # do not add Null outfit to history
                 self.updateClothingHistory(outfitQueue[0], db)
             self.setCurrOutfit(outfitQueue[0], db)
 
