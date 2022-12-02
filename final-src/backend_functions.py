@@ -143,6 +143,22 @@ class User:
             return True
         else:
             return False
+
+    # outfit must be a list of 4 clothing items
+    def setClothingHistory(self, outfits, db=True):
+            self.clothingHistory = outfits
+            userCollection.update_one({'username': self.getUsername()}, {'$set': {'clothingHistory': []}})
+            if db:
+                for outfit in outfits:
+                    outfitDict = []
+                    for item in outfit:
+                        if item is not None:
+                            outfitDict.append(item.__dict__)
+                        else:
+                            outfitDict.append(None)
+                    userCollection.update_one({'username': self.getUsername()},
+                                              {'$push': {'clothingHistory': outfitDict}})
+            return True
     
     # outfit must be a list of 4 clothing items
     def setCurrOutfit(self, outfit, db = True):
@@ -274,6 +290,11 @@ class User:
             return outfitQueue[queueIndex]
 
         if callStatus == "new":
+
+            # stop history from getting too long
+            if len(self.getClothingHistory()) > 10:
+                self.setClothingHistory(self.getClothingHistory()[-10:])
+
             # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
             temp_min = weatherInput[0]
             temp_max = weatherInput[1]

@@ -9,8 +9,8 @@ client = back.pymongo.MongoClient(link)
 db = client["User"]
 userCollection = db["Test"]
 
-import api
-debugUser = api.createPerson('galaxys2441392672')
+# import api
+# debugUser = api.createPerson('galaxys2441392672')
 
-debugUser.dailyRecommender([20, 30, 25, "nothing"], "new")
+userCollection.update_one({'username': 'galaxys2441392672'}, {'$set': {'clothingHistory': []}})
 
