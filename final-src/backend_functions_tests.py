@@ -284,10 +284,9 @@ class TestUser(unittest.TestCase):
         testItem5 = Clothing("sweatshirt", [], "topOuter", testImg5, "a-4", -20, 120)
         newUser.updateWardrobe(testItem5, False)
         testOutfit2 = [testItem5, testItem3, testItem2, testItem1]
-        newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False) # run to assemble queue with new item
-        outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "reject", False)
+        outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False) # run to assemble queue with new item
 
-        self.assertNotEqual(outfit2, testOutfit, "Rejected Outfit will not get re-recommended ")
+        self.assertNotEqual(outfit2, testOutfit, "Rejected Outfit will not get re-recommended first")
         self.assertEqual(outfit2, testOutfit2)
         self.assertEqual(newUser.getClothingHistory(), [outfit, outfit2]) # testOutfit gets removed from clothingHistory the second time, as it is rejected
         #print(newUser.getCurrOutfit())
