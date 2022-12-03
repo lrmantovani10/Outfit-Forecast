@@ -2,6 +2,7 @@ import os
 import math
 from google.cloud import vision
 from google.cloud.vision_v1 import types
+import copy
 import pymongo
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'inspiring-list-367201-258ee5841906.json'
@@ -32,6 +33,13 @@ def genKey(fit):
         except:
             str += "None"
     return str
+
+def printQ(queue):
+    print("--- QUEUE:")
+    for fit in queue:
+        for item in fit:
+            print(item.getClothingID())
+    print("---")
 
 # only user setters need to access and modify db
 class User:
@@ -426,21 +434,22 @@ class User:
                 # print("---")
             # Adds combinations of outfits 1 and 2 to the queue
             outfitQueue = []
-            for item in output:
-                try:
-                    print(item.imgURL)
-                except:
-                    print(None)
-            print("---")
-            for item in output2:
-                try:
-                    print(item.imgURL)
-                except:
-                    print(None)
+            # for item in output:
+            #     try:
+            #         print(item.imgURL)
+            #     except:
+            #         print(None)
+            # print("---")
+            # for item in output2:
+            #     try:
+            #         print(item.imgURL)
+            #     except:
+            #         print(None)
             dupMap = {}
             outfitQueue.append(output)
             dupMap[genKey(output)] = True
 
+            #printQ(outfitQueue)
             for i in range(4):
                 if output2[i] != None:
                     fit = output[:i] + [output2[i]] + output[i+1:]
@@ -449,12 +458,12 @@ class User:
                     except:
                         outfitQueue.append(fit)
                         dupMap[genKey(fit)] = True
-
+            #printQ(outfitQueue)
             for i in range(4):
                 if output2[i] != None:
                     for j in range(i+1,4):
                         if output2[j] != None:
-                            newOutput = output
+                            newOutput = copy.copy(output)
                             newOutput[i] = output2[i]
                             newOutput[j] = output2[j]
                             try:
@@ -462,14 +471,14 @@ class User:
                             except:
                                 outfitQueue.append(newOutput)
                                 dupMap[genKey(newOutput)] = True
-
+            #printQ(outfitQueue)
             for i in range(4):
                 if output2[i] != None:
                     for j in range(i + 1, 4):
                         if output2[j] != None:
                             for k in range(j + 1, 4):
                                 if output2[k] != None:
-                                    newOutput = output
+                                    newOutput = copy.copy(output)
                                     newOutput[i] = output2[i]
                                     newOutput[j] = output2[j]
                                     newOutput[k] = output2[k]
