@@ -23,7 +23,7 @@ def createPerson(username):
     wardrobe = []
     for item in wardrobeDict:
         try:
-            newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
+            newItem = back.Clothing(item['objectName'], item['objectNames'], item['classification'], item['imgURL'], item['clothingID'],
                                     item['lowerTempBound'], item['upperTempBound'])
         except:
             newItem = None
@@ -35,7 +35,7 @@ def createPerson(username):
         fit = []
         for i in range(4):
             try:
-                fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
+                fit.append(back.Clothing(item[i]['objectName'], item[i]['objectNames'], item[i]['classification'], item[i]['imgURL'],
                                          item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
             except:
                 fit.append(None)
@@ -45,7 +45,7 @@ def createPerson(username):
     currOutfit = []
     for item in currOutfitDict:
         try:
-            newItem = back.Clothing(item['objectName'], item['classification'], item['imgURL'], item['clothingID'],
+            newItem = back.Clothing(item['objectName'], item['objectNames'], item['classification'], item['imgURL'], item['clothingID'],
                                     item['lowerTempBound'], item['upperTempBound'])
         except:
             newItem = None
@@ -57,7 +57,7 @@ def createPerson(username):
         fit = []
         for i in range(4):
             try:
-                fit.append(back.Clothing(item[i]['objectName'], item[i]['classification'], item[i]['imgURL'],
+                fit.append(back.Clothing(item[i]['objectName'], item[i]['objectNames'], item[i]['classification'], item[i]['imgURL'],
                                          item[i]['clothingID'], item[i]['lowerTempBound'], item[i]['upperTempBound']))
             except:
                 fit.append(None)

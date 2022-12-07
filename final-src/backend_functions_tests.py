@@ -68,36 +68,36 @@ class TestFlask(unittest.TestCase):
         userCollection.update_one({'username' : 'forunittests'},{'$set': {'clothingHistory': []}})
 
         recommenderNewTest = requests.get('https://outfit-forecast.herokuapp.com/dailyRecommender/forunittests/60/65/63/nothing/new').json()
-        recommenderNewExpected = [{'objectName': 'sweater', 'classification': 'topOuter', 'clothingID': 'leo-0',
+        recommenderNewExpected = [{'objectName': 'sweater', 'objectNames': ["outerwear", "jersey", "neck", "sleeve", "collar", "woolen", "sportswear", "font", "wool", "pattern"], 'classification': 'topOuter', 'clothingID': 'leo-0',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweater.jpg?alt=media&token=ded9d625-062e-4e61-bbdc-a3988104fb8b',
                                    'lowerTempBound': -10, 'upperTempBound': 110},
-                                  {'objectName': 't-shirt', 'classification': 'topInner', 'clothingID': 'leo-1',
+                                  {'objectName': 't-shirt', 'objectNames': ["clothing", "outerwear", "sleeve", "font", "t-shirt", "electric blue", "pattern", "fashion design", "peach", "carmine"], 'classification': 'topInner', 'clothingID': 'leo-1',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 'sweatpants', 'classification': 'bottom', 'clothingID': 'leo-2',
+                                  {'objectName': 'sweatpants', 'objectNames': ["shoe", "outerwear", "leg", "sleeve", "gester", "sportswear", "active pants", "plant", "denim", "human leg"], 'classification': 'bottom', 'clothingID': 'leo-2',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweatpants.jpg?alt=media&token=9c54025f-94f1-4759-9894-6df682867241',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 'shoes', 'classification': 'shoes', 'clothingID': 'leo-3',
+                                  {'objectName': 'shoes', 'objectNames': ["footwear", "walking shoe", "sneakers", "grey", "sportwear", "font", "electric blue", "athletic shoe", "skate shoe", "outdoor shoe"], 'classification': 'shoes', 'clothingID': 'leo-3',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shoes.jpg?alt=media&token=a1f187f2-ca97-41b2-a39f-8291f34849bd',
                                    'lowerTempBound': -20, 'upperTempBound': 120}]
         self.assertEqual(recommenderNewTest, recommenderNewExpected)
 
         recommenderRejectTest = requests.get('https://outfit-forecast.herokuapp.com/dailyRecommender/forunittests/60/65/63/nothing/reject').json()
-        recommenderRejectExpected = [{'objectName': 'hoodie', 'classification': 'topOuter', 'clothingID': 'leo-4',
+        recommenderRejectExpected = [{'objectName': 'hoodie', 'objectNames': ["clothing", "shoulder", "neck", "sleeve", "grey", "t-shirt", "collar", "blazer", "hood", "jersey"], 'classification': 'topOuter', 'clothingID': 'leo-4',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 't-shirt', 'classification': 'topInner', 'clothingID': 'leo-1',
+                                  {'objectName': 't-shirt', 'objectNames': ["clothing", "outerwear", "sleeve", "font", "t-shirt", "electric blue", "pattern", "fashion design", "peach", "carmine"], 'classification': 'topInner', 'clothingID': 'leo-1',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 'sweatpants', 'classification': 'bottom', 'clothingID': 'leo-2',
+                                  {'objectName': 'sweatpants', 'objectNames': ["shoe", "outerwear", "leg", "sleeve", "gester", "sportswear", "active pants", "plant", "denim", "human leg"], 'classification': 'bottom', 'clothingID': 'leo-2',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-sweatpants.jpg?alt=media&token=9c54025f-94f1-4759-9894-6df682867241',
                                    'lowerTempBound': -20, 'upperTempBound': 120},
-                                  {'objectName': 'shoes', 'classification': 'shoes', 'clothingID': 'leo-3',
+                                  {'objectName': 'shoes', 'objectNames': ["footwear", "walking shoe", "sneakers", "grey", "sportwear", "font", "electric blue", "athletic shoe", "skate shoe", "outdoor shoe"], 'classification': 'shoes', 'clothingID': 'leo-3',
                                    'imgURL': 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shoes.jpg?alt=media&token=a1f187f2-ca97-41b2-a39f-8291f34849bd',
                                    'lowerTempBound': -20, 'upperTempBound': 120}]
         self.assertEqual(recommenderRejectTest, recommenderRejectExpected)
 
-    ''' def test_classification_endpoint(self):
+    def test_classification_endpoint(self):
         realMongoLink = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-01.mpb6ff1.mongodb.net:27017,ac-m14bdu9-shard-00-02.mpb6ff1.mongodb.net:27017/?ssl=true&replicaSet=atlas-pfj1lz-shard-0&authSource=admin&retryWrites=true&w=majority"
         client = pymongo.MongoClient(realMongoLink)
         db = client["User"]
@@ -107,7 +107,7 @@ class TestFlask(unittest.TestCase):
    
         wardrobeLength = len(match['wardrobe'])
 
-        url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-hoodie.jpg?alt=media&token=b761f8de-6679-42d4-a68d-f434e748dfb7'
+        url = 'https://firebasestorage.googleapis.com/v0/b/outfit-forecast-2.appspot.com/o/test-coat.jpg?alt=media&token=4905d3af-43af-4c01-a85f-5dbf0dd40996'
 
         body = {'username':'forclothingaddition', 'lower':60, 'upper':65, 'url':url}
         r = requests.post('https://outfit-forecast.herokuapp.com/classifyNew', json=body)
@@ -116,7 +116,7 @@ class TestFlask(unittest.TestCase):
         
         wardrobeLength2 = len(match['wardrobe'])
     
-        self.assertEqual(wardrobeLength + 1, wardrobeLength2) '''
+        self.assertEqual(wardrobeLength + 1, wardrobeLength2)
 
     def test_user_creation_endpoint(self):
         now = datetime.now()
@@ -168,20 +168,20 @@ class TestUser(unittest.TestCase):
         newUser = User("a", [], [], [], [], 0, [])
         self.assertEqual(newUser.getWardrobe(), [])
         test_img = "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7"
-        newClothing = Clothing("t-shirt", "topInner", test_img, 0)
+        newClothing = Clothing("t-shirt", [], "topInner", test_img, 0)
         self.assertTrue(newUser.updateWardrobe(newClothing, False))
         self.assertFalse(newUser.updateWardrobe("t-shirt", False), "must update wardobe with clothing item")
         self.assertEqual(newUser.getWardrobe(), [newClothing])
 
     def test_currOutfit(self):
         newUser = User("a", [], [], [], [], 0, [])
-        fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
-        fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2)]
-        fit3 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3),
-                Clothing("Sneakers", "shoes", "URL", 4)]
+        fit1 = [Clothing("Jacket", [], "topOuter", "URL", 0), Clothing("T-Shirt", [], "topInner", "URL", 1),
+                Clothing("Jeans", [], "bottom", "URL", 2), Clothing("Sandals", [], "shoes", "URL", 3)]
+        fit2 = [Clothing("Jacket", [], "topOuter", "URL", 0), Clothing("T-Shirt", [], "topInner", "URL", 1),
+                Clothing("Jeans", [], "bottom", "URL", 2)]
+        fit3 = [Clothing("Jacket", [], "topOuter", "URL", 0), Clothing("T-Shirt", [], "topInner", "URL", 1),
+                Clothing("Jeans", [], "bottom", "URL", 2), Clothing("Sandals", [], "shoes", "URL", 3),
+                Clothing("Sneakers", [], "shoes", "URL", 4)]
         self.assertTrue(newUser.setCurrOutfit(fit1, False))
         self.assertEqual(newUser.getCurrOutfit(), fit1)
         self.assertFalse(newUser.setCurrOutfit(fit2, False), "There must be 4 clothing objects")
@@ -190,15 +190,15 @@ class TestUser(unittest.TestCase):
 
     def test_clothingHistory(self):
         newUser = User("a", [], [], [], [], 0, [])
-        fit1 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
-        fit2 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2)]
-        fit3 = [Clothing("Jacket", "topOuter", "URL", 0), Clothing("T-Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3),
-                Clothing("Sneakers", "shoes", "URL", 4)]
-        fit4 = [Clothing("Sweater", "topOuter", "URL", 0), Clothing("Dress Shirt", "topInner", "URL", 1),
-                Clothing("Jeans", "bottom", "URL", 2), Clothing("Sandals", "shoes", "URL", 3)]
+        fit1 = [Clothing("Jacket", [], "topOuter", "URL", 0), Clothing("T-Shirt", [], "topInner", "URL", 1),
+                Clothing("Jeans", [], "bottom", "URL", 2), Clothing("Sandals", [], "shoes", "URL", 3)]
+        fit2 = [Clothing("Jacket", [], "topOuter", "URL", 0), Clothing("T-Shirt", [], "topInner", "URL", 1),
+                Clothing("Jeans", [], "bottom", "URL", 2)]
+        fit3 = [Clothing("Jacket", [], "topOuter", "URL", 0), Clothing("T-Shirt", [], "topInner", "URL", 1),
+                Clothing("Jeans", [], "bottom", "URL", 2), Clothing("Sandals", [], "shoes", "URL", 3),
+                Clothing("Sneakers", [], "shoes", "URL", 4)]
+        fit4 = [Clothing("Sweater", [], "topOuter", "URL", 0), Clothing("Dress Shirt", [], "topInner", "URL", 1),
+                Clothing("Jeans", [], "bottom", "URL", 2), Clothing("Sandals", [], "shoes", "URL", 3)]
         self.assertTrue(newUser.updateClothingHistory(fit1, False))
         self.assertEqual(newUser.getClothingHistory(), [fit1])
         self.assertFalse(newUser.updateClothingHistory(fit2, False), "There must be 4 clothing objects in the fit")
@@ -238,7 +238,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.getWardrobe(), [])
         # google vision api takes imageURL from firebase
         testImg = "gs://first-bucket-example/shoes.jpg"
-        testItem = Clothing("footwear", "shoes", testImg, "a-0", -20, 120)
+        testItem = Clothing("footwear", ["footwear", "shoe", "walking shoe", "sneakers", "sportswear", "cleat", "outdoor shoe", "font", "athletic shoe", "electric blue"], "shoes", testImg, "a-0", -20, 120)
         self.assertEqual(newUser.classifyNew(testImg, -20, 120, False), "Image Classified: footwear")
         updatedWardrobe = newUser.getWardrobe()
         # print(updatedWardrobe.__dict__)
@@ -247,11 +247,11 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.classifyNew(testImg2, -20, 120, False), "API Error")
         self.assertTrue(clothingItemEquals(updatedWardrobe[0], testItem))
         testImg3 = "gs://first-bucket-example/t-shirt.jpg"
-        testItem3 = Clothing("top", "topInner", testImg3, "a-1", -20, 120)
+        testItem3 = Clothing("top", ["outerwear", "dress", "sleeve", "font", "active shirt", "t-shirt", "collar", "electric blue", "magenta", "carmine"], "topInner", testImg3, "a-1", -20, 120)
         self.assertEqual(newUser.classifyNew(testImg3, -20, 120, False), "Image Classified: top")
         self.assertTrue(clothingItemEquals(newUser.getWardrobe()[1], testItem3))
         testImg4 = "gs://first-bucket-example/pants.jpg"
-        testItem4 = Clothing("shorts", "bottom", testImg4, "a-2", -20, 120)
+        testItem4 = Clothing("shorts", ["brown", "textile", "sleeve", "wood", "tints and shades", "linens", "t-shirt", "pattern", "comfort", "peach"], "bottom", testImg4, "a-2", -20, 120)
         self.assertEqual(newUser.classifyNew(testImg4, -20, 120, False), "Image Classified: shorts")
         self.assertTrue(clothingItemEquals(newUser.getWardrobe()[2], testItem4))
 
@@ -261,10 +261,10 @@ class TestUser(unittest.TestCase):
         testImg2 = "gs://first-bucket-example/jeans.jpeg"
         testImg3 = "gs://first-bucket-example/t-shirt.jpg"
         testImg4 = "gs://first-bucket-example/flannel.png"
-        testItem1 = Clothing("sneakers", "shoes", testImg1, "a-0", -20, 120)
-        testItem2 = Clothing("jeans", "bottom", testImg2, "a-1", -20, 120)
-        testItem3 = Clothing("t-shirt", "topInner", testImg3, "a-2", -20, 120)
-        testItem4 = Clothing("outerwear", "topOuter", testImg4, "a-3", -20, 120)
+        testItem1 = Clothing("sneakers", [], "shoes", testImg1, "a-0", -20, 120)
+        testItem2 = Clothing("jeans", [], "bottom", testImg2, "a-1", -20, 120)
+        testItem3 = Clothing("t-shirt", [], "topInner", testImg3, "a-2", -20, 120)
+        testItem4 = Clothing("outerwear", [], "topOuter", testImg4, "a-3", -20, 120)
         testOutfit = [testItem4, testItem3, testItem2, testItem1]
         
         self.assertNotEqual(newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False), testOutfit, "There are no clothes in the wardrobe")
@@ -281,13 +281,12 @@ class TestUser(unittest.TestCase):
         self.assertEqual(newUser.getCurrOutfit(), testOutfit)
 
         testImg5 = "gs://first-bucket-example/IMG_0077.jpg"
-        testItem5 = Clothing("sweatshirt", "topOuter", testImg5, "a-4", -20, 120)
+        testItem5 = Clothing("sweatshirt", [], "topOuter", testImg5, "a-4", -20, 120)
         newUser.updateWardrobe(testItem5, False)
         testOutfit2 = [testItem5, testItem3, testItem2, testItem1]
-        newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False) # run to assemble queue with new item
-        outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "reject", False)
+        outfit2 = newUser.dailyRecommender([30, 40, 35, 'rain'], "new", False) # run to assemble queue with new item
 
-        self.assertNotEqual(outfit2, testOutfit, "Rejected Outfit will not get re-recommended ")
+        self.assertNotEqual(outfit2, testOutfit, "Rejected Outfit will not get re-recommended first")
         self.assertEqual(outfit2, testOutfit2)
         self.assertEqual(newUser.getClothingHistory(), [outfit, outfit2]) # testOutfit gets removed from clothingHistory the second time, as it is rejected
         #print(newUser.getCurrOutfit())
@@ -302,7 +301,7 @@ class TestUser(unittest.TestCase):
 class TestClothing(unittest.TestCase):
 
     def test_objectName(self):
-        newClothing = Clothing("t-shirt", "topInner",
+        newClothing = Clothing("t-shirt", [], "topInner",
                                "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
                                0)
         self.assertEqual(newClothing.getObjectName(), "t-shirt")
@@ -312,7 +311,7 @@ class TestClothing(unittest.TestCase):
         self.assertFalse(newClothing.setObjectName(0), "objectName must be type string")
 
     def test_classification(self):
-        newClothing = Clothing("t-shirt", "topInner",
+        newClothing = Clothing("t-shirt", [], "topInner",
                                "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
                                0)
         self.assertTrue(newClothing.setClassification("bottom"))
@@ -321,7 +320,7 @@ class TestClothing(unittest.TestCase):
         self.assertEqual(newClothing.getClassification(), "topInner")
 
     def test_bounds(self):
-        newClothing = Clothing("t-shirt", "topInner",
+        newClothing = Clothing("t-shirt", [], "topInner",
                                "https://firebasestorage.googleapis.com/v0/b/outfit-forecast.appspot.com/o/test-shirt.jpg?alt=media&token=a4a90723-2a59-4ed0-aa4e-e44a7aba57b7",
                                0)
         self.assertTrue(newClothing.setBounds(-20, 70))

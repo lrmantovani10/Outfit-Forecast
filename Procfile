@@ -1,1 +1,1 @@
-web: gunicorn --chdir ./3b api:app
+web: gunicorn --chdir ./final-src api:app

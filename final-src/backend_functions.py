@@ -2,6 +2,7 @@ import os
 import math
 from google.cloud import vision
 from google.cloud.vision_v1 import types
+import copy
 import pymongo
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'inspiring-list-367201-258ee5841906.json'
@@ -11,6 +12,34 @@ link = "mongodb://DGilb23:Bhhe2nsBOXwI4Axh@ac-m14bdu9-shard-00-00.mpb6ff1.mongod
 client = pymongo.MongoClient(link)
 userDB = client["User"]
 userCollection = userDB["Test"]
+
+def similarExists(target, list):
+    target = target.lower()
+    for str in [x.lower() for x in list]:
+        if target in str:
+            return True
+    return False
+
+def extremeAtmosphereCheck(atmosphere):
+    atmosphere = atmosphere.lower()
+    if 'rain' in atmosphere or 'storm' in atmosphere or 'snow' in atmosphere or 'sleet' in atmosphere or 'mist' in atmosphere or 'flood' in atmosphere or 'blizzard' in atmosphere or 'hail' in atmosphere or 'freezing' in atmosphere or 'blizzard' in atmosphere:
+        return True
+
+def genKey(fit):
+    str = ""
+    for item in fit:
+        try:
+            str += item.getClothingID()
+        except:
+            str += "None"
+    return str
+
+def printQ(queue):
+    print("--- QUEUE:")
+    for fit in queue:
+        for item in fit:
+            print(item.getClothingID())
+    print("---")
 
 # only user setters need to access and modify db
 class User:
@@ -108,17 +137,36 @@ class User:
             if (len(outfit) != 4):
                 return False
             for x in outfit:
-                if type(x) is not Clothing:
+                if type(x) is not Clothing and x is not None:
                     return False
             self.clothingHistory.append(outfit)
             if db:
                 outfitDict = []
                 for item in outfit:
-                    outfitDict.append(item.__dict__)
+                    if item is not None:
+                        outfitDict.append(item.__dict__)
+                    else:
+                        outfitDict.append(None)
                 userCollection.update_one({'username': self.getUsername()}, {'$push': {'clothingHistory': outfitDict}})
-            return True   
+            return True
         else:
             return False
+
+    # outfit must be a list of 4 clothing items
+    def setClothingHistory(self, outfits, db=True):
+            self.clothingHistory = outfits
+            userCollection.update_one({'username': self.getUsername()}, {'$set': {'clothingHistory': []}})
+            if db:
+                for outfit in outfits:
+                    outfitDict = []
+                    for item in outfit:
+                        if item is not None:
+                            outfitDict.append(item.__dict__)
+                        else:
+                            outfitDict.append(None)
+                    userCollection.update_one({'username': self.getUsername()},
+                                              {'$push': {'clothingHistory': outfitDict}})
+            return True
     
     # outfit must be a list of 4 clothing items
     def setCurrOutfit(self, outfit, db = True):
@@ -126,15 +174,18 @@ class User:
             if (len(outfit) != 4):
                 return False
             for x in outfit:
-                if type(x) is not Clothing:
+                if type(x) is not Clothing and x is not None:
                     return False
             self.currOutfit = outfit
             if db:
                 outfitDict = []
                 for item in outfit:
-                    outfitDict.append(item.__dict__)
-                userCollection.update_one({'username' : self.getUsername()},{'$set': {'currOutfit': outfitDict}})
-            return True   
+                    if item is not None:
+                        outfitDict.append(item.__dict__)
+                    else:
+                        outfitDict.append(None)
+                userCollection.update_one({'username': self.getUsername()}, {'$set': {'currOutfit': outfitDict}})
+            return True
         else:
             return False
 
@@ -191,6 +242,11 @@ class User:
         if 'error' in response_label or 'error' in classification_label:
             return "API Error"
 
+        objectNames = []
+        for label in response_label.label_annotations:
+            lab = label.description.lower()
+            objectNames.append(lab)
+
         found = False
         temp = ""
         name = ""
@@ -220,7 +276,7 @@ class User:
             return "Could not classify the Image"
 
         name = temp
-        newItem = Clothing(name, classification, imgURL, username, lower, upper)
+        newItem = Clothing(name, objectNames, classification, imgURL, username, lower, upper)
         self.updateWardrobe(newItem, db)
         return "Image Classified: " + name
 
@@ -242,6 +298,11 @@ class User:
             return outfitQueue[queueIndex]
 
         if callStatus == "new":
+
+            # stop history from getting too long
+            if len(self.getClothingHistory()) > 10:
+                self.setClothingHistory(self.getClothingHistory()[-10:])
+
             # weatherInput format: ["temp_min", "temp_max", "feels_like", "atmosphere"]
             temp_min = weatherInput[0]
             temp_max = weatherInput[1]
@@ -268,6 +329,10 @@ class User:
             output = [None, None, None, None]
             output2 = [None, None, None, None]
 
+            yesterdaysIDs = []
+            if len(self.getClothingHistory()) > 0:
+                yesterdaysIDs = list(map(lambda x: getID(x), self.getClothingHistory()[-1]))
+
             # CURRENT ALGORITHM: CHOOSES CLOTHING ITEM WITH TIGHTEST (SMALLEST) SURVEY TEMPERATURE RANGE
             # WHERE THE DAILY MAX AND MIN TEMPERATURES FALL INTO THAT RANGE
 
@@ -278,120 +343,150 @@ class User:
                 lower = item.getLowerBound()
                 upper = item.getUpperBound()
 
-                # this might end up not giving you a fit!!!
-                if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
-                    continue
+                # # this might end up not giving you a fit!!!
+                # if not (lower <= temp_min <= upper and lower <= temp_max <= upper):
+                #     continue
 
-                rangeF = upper - lower
+                diff = abs(feels_like - (lower + upper) // 2)
                 if item.classification == "topOuter":
                     if feels_like >= 75:
                         continue
-                    if 'rain' in atmosphere or 'snow' in atmosphere:
-                        if 'jacket' not in item.getObjectName() and 'coat' not in item.getObjectName() and 'wind' not in item.getObjectName() and 'parka' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
+                    if extremeAtmosphereCheck(atmosphere):
+                        if not similarExists('jacket', item.getObjectNames()) and not similarExists('coat', item.getObjectNames()) and not similarExists('wind', item.getObjectNames()) and not similarExists('parka', item.getObjectNames()) and not similarExists('rain', item.getObjectNames()) and not similarExists('snow', item.getObjectNames()):
                             if topOuterConditionsMet:
                                 continue
                         else:
                             if not topOuterConditionsMet:
                                 topOuterConditionsMet = True
+                                output2[0] = output[0]
                                 output[0] = item
-                                output2[0] = None
-                                minTopOuterRange = rangeF
-                                minTopInnerRange2 = math.inf
+                                minTopOuterRange2 = minTopOuterRange
+                                minTopOuterRange = diff
                                 continue
 
-                    if rangeF < minTopOuterRange:
+                    if diff < minTopOuterRange:
                         output2[0] = output[0]
                         output[0] = item
                         minTopOuterRange2 = minTopOuterRange
-                        minTopOuterRange = rangeF
-                    elif rangeF < minTopOuterRange2:
+                        minTopOuterRange = diff
+                    elif diff < minTopOuterRange2:
                         output2[0] = item
-                        minTopOuterRange2 = rangeF
+                        minTopOuterRange2 = diff
                 if item.classification == "topInner":
                     # no topInnerConditions yet, might add short/long sleeve in the future
-                    if rangeF < minTopInnerRange:
+                    if diff < minTopInnerRange:
                         output2[1] = output[1]
                         output[1] = item
                         minTopInnerRange2 = minTopInnerRange
-                        minTopInnerRange = rangeF
-                    elif rangeF < minTopInnerRange2:
+                        minTopInnerRange = diff
+                    elif diff < minTopInnerRange2:
                         output2[1] = item
-                        minTopInnerRange2 = rangeF
+                        minTopInnerRange2 = diff
                 if item.classification == "bottom":
-                    if 'rain' in atmosphere or 'snow' in atmosphere:
-                        if 'short' in item.getObjectName():
+                    if extremeAtmosphereCheck(atmosphere):
+                        if similarExists('short', item.getObjectNames()):
                             if bottomConditionsMet:
                                 continue
                         else:
                             if not bottomConditionsMet:
                                 bottomConditionsMet = True
+                                output2[2] = output[2]
                                 output[2] = item
-                                output2[2] = None
-                                minBottomRange = rangeF
-                                minBottomRange2 = math.inf
+                                minBottomRange2 = minBottomRange
+                                minBottomRange = diff
                                 continue
 
-                    if rangeF < minBottomRange:
+                    if diff < minBottomRange:
                         output2[2] = output[2]
                         output[2] = item
                         minBottomRange2 = minBottomRange
-                        minBottomRange = rangeF
-                    elif rangeF < minBottomRange2:
+                        minBottomRange = diff
+                    elif diff < minBottomRange2:
                         output2[2] = item
-                        minBottomRange2 = rangeF
+                        minBottomRange2 = diff
 
                 if item.classification == "shoes":
-                    if 'rain' in atmosphere or 'snow' in atmosphere:
-                        if 'boot' not in item.getObjectName() and 'rain' not in item.getObjectName() and 'snow' not in item.getObjectName():
+                    if extremeAtmosphereCheck(atmosphere):
+                        if not similarExists('boot', item.getObjectNames()) and not similarExists('rain', item.getObjectNames()) and not similarExists('snow', item.getObjectNames()):
                             if shoesConditionsMet:
                                 continue
                         else:
                             if not shoesConditionsMet:
                                 shoesConditionsMet = True
+                                output2[3] = output[3]
                                 output[3] = item
-                                output2[3] = None
-                                minShoesRange = rangeF
-                                minShoesRange2 = math.inf
+                                minShoesRange2 = minShoesRange
+                                minShoesRange = diff
                                 continue
 
-                    if rangeF < minShoesRange:
+                    if diff < minShoesRange:
                         output2[3] = output[3]
                         output[3] = item
                         minShoesRange2 = minShoesRange
-                        minShoesRange = rangeF
-                    elif rangeF < minShoesRange2:
+                        minShoesRange = diff
+                    elif diff < minShoesRange2:
                         output2[3] = item
-                        minShoesRange2 = rangeF
+                        minShoesRange2 = diff
 
+                # # Debug print outfit after each item
+                # print(output)
+                # print(output2)
+                # print("---")
             # Adds combinations of outfits 1 and 2 to the queue
             outfitQueue = []
-
+            # for item in output:
+            #     try:
+            #         print(item.imgURL)
+            #     except:
+            #         print(None)
+            # print("---")
+            # for item in output2:
+            #     try:
+            #         print(item.imgURL)
+            #     except:
+            #         print(None)
+            dupMap = {}
             outfitQueue.append(output)
+            dupMap[genKey(output)] = True
 
+            #printQ(outfitQueue)
             for i in range(4):
                 if output2[i] != None:
-                    outfitQueue.append(output[:i] + [output2[i]] + output[i+1:])
-
+                    fit = output[:i] + [output2[i]] + output[i+1:]
+                    try:
+                        temp = dupMap[genKey(fit)]
+                    except:
+                        outfitQueue.append(fit)
+                        dupMap[genKey(fit)] = True
+            #printQ(outfitQueue)
             for i in range(4):
                 if output2[i] != None:
                     for j in range(i+1,4):
                         if output2[j] != None:
-                            newOutput = output
+                            newOutput = copy.copy(output)
                             newOutput[i] = output2[i]
                             newOutput[j] = output2[j]
-                            outfitQueue.append(newOutput)
-
+                            try:
+                                temp = dupMap[genKey(newOutput)]
+                            except:
+                                outfitQueue.append(newOutput)
+                                dupMap[genKey(newOutput)] = True
+            #printQ(outfitQueue)
             for i in range(4):
                 if output2[i] != None:
                     for j in range(i + 1, 4):
                         if output2[j] != None:
                             for k in range(j + 1, 4):
                                 if output2[k] != None:
-                                    newOutput = output
+                                    newOutput = copy.copy(output)
                                     newOutput[i] = output2[i]
                                     newOutput[j] = output2[j]
                                     newOutput[k] = output2[k]
-                                    outfitQueue.append(newOutput)
+                                    try:
+                                        temp = dupMap[genKey(newOutput)]
+                                    except:
+                                        outfitQueue.append(newOutput)
+                                        dupMap[genKey(newOutput)] = True
 
             allowedNones = []
             for idx, piece in enumerate(output):
@@ -405,32 +500,29 @@ class User:
                         if idx not in allowedNones:
                             allowed = False
                 if allowed:
-                    outfitQueue.append(output2)
+                    try:
+                        temp = dupMap[genKey(output2)]
+                    except:
+                        outfitQueue.append(output2)
+                        dupMap[genKey(output2)] = True
 
-            # print(outfitQueue)
-            # for fit in outfitQueue:
-            #     print("FIT:")
-            #     for i in range(4):
-            #         if fit[i] is None:
-            #             print()
-            #         print(fit[i].__dict__)
-
-            # don't suggest yesterday's chosen outfit
-
-            if len(self.getClothingHistory()) > 0:
-                yesterdaysIDs = list(map(lambda x: x.getClothingID(), self.getClothingHistory()[-1]))
+            # don't suggest yesterday's exact chosen outfit, but move it to back of recommended
+            if len(self.getClothingHistory()) > 0 and output2 != [None, None, None, None]:
+                yesterdaysIDs = list(map(lambda x: getID(x), self.getClothingHistory()[-1]))
                 #print(yesterdaysIDs)
                 if len(outfitQueue) != 1:
-                    for x in range(len(outfitQueue)):
-                        todaysIDs = list(map(lambda x: x.getClothingID(), outfitQueue[x]))
+                    for y in range(len(outfitQueue)):
+                        todaysIDs = list(map(lambda x: getID(x), outfitQueue[y]))
                         #print(todaysIDs)
                         if yesterdaysIDs == todaysIDs:
-                            outfitQueue.pop(x)
+                            dup = outfitQueue[y]
+                            outfitQueue.append(dup)
+                            outfitQueue.pop(y) # remove original duplicate, put it last
                             break
 
-
             # Sets/returns first outfit and updates history with it
-            self.updateClothingHistory(outfitQueue[0], db)
+            if outfitQueue[0] != [None, None, None, None]: # do not add Null outfit to history
+                self.updateClothingHistory(outfitQueue[0], db)
             self.setCurrOutfit(outfitQueue[0], db)
 
             self.setQueueIndex(0, db)
@@ -439,8 +531,13 @@ class User:
         else:
             return "Invalid call status (must be new/reject)"
 
+def getID(x):
+    if x is not None:
+        return x.getClothingID()
+    return None
+
 class Clothing:
-    def __init__(self, name, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):
+    def __init__(self, name, objectNames, classification, imgURL, clothingID, lowerBound = -20, upperBound = 120):
         self.objectName = ""
         self.setObjectName(name)
 
@@ -453,6 +550,8 @@ class Clothing:
         self.lowerTempBound = -20
         self.upperTempBound = 120
         self.setBounds(lowerBound, upperBound)
+
+        self.objectNames = objectNames
 
     # def __eq__(self, other):
     #     if self is None and other is None:
@@ -498,6 +597,9 @@ class Clothing:
     
     def getUpperBound(self):
         return self.upperTempBound
+
+    def getObjectNames(self):
+        return self.objectNames
     
     # ------- setters -------
 
