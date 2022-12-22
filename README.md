@@ -1,8 +1,8 @@
-# Outfit-Forecast Back-End
+# Outfit-Forecast Back-End Repository
 
 <b>An app to generate outfit predictions based on one's wardrobe and current weather</b>
 
-This is the backend code repository, full description and installation instructions (and user functionality) will be in the [front-end repo](https://github.com/LukeKnutson9/Outfit-Forecast-Frontend).
+Full description and installation instructions (and user functionality) will be in the [front-end repo](https://github.com/LukeKnutson9/Outfit-Forecast-Frontend).
 
 <b>Current class diagram</b>:
 ![Class Diagram](class-diagrams/updatedClassDiagram6.png)
