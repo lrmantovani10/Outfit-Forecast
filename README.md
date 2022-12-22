@@ -1,4 +1,4 @@
-# Outfit-Forecast Back-End Repository
+# Outfit Forecast Back-End Repository
 
 <b>An app to generate outfit predictions based on one's wardrobe and current weather</b>
 
